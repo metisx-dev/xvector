@@ -33,5 +33,6 @@
 
 # Build output
 [Bb]uild/
+bin/
 
 # User-specific files
