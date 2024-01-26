@@ -9,3 +9,5 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${XVEC_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PUBLIC
     xvec_buffer
 )
+
+set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${ROOT_DIR}/bin")

@@ -36,3 +36,9 @@
 bin/
 
 # User-specific files
+
+# CMake results
+[Cc]MakeFiles/
+Makefile
+*.cmake
+CMakeCache.txt
