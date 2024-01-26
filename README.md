@@ -1,5 +1,8 @@
 # xvector API
-C API for xvector buffer creation and calculation
+C API for xvector buffer creation and calculation 
+
+
+Provides cosine similarity on CPU hosts
 
 # Preliminary installs
 ## Google test
