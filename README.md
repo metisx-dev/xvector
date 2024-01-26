@@ -1,5 +1,5 @@
 # xvector API
-C API for xvector indexing and searching
+C API for xvector buffer creation and calculation of cosine similarity
 
 # Preliminary installs
 ## Google test
