@@ -75,26 +75,16 @@ void createIndexArrayResult(CpuDistanceQuery* query)
 
     for (std::size_t i = 0; i < query->targetCount(); i++)
     {
-        const uint8_t* filterData = nullptr;
-        if (filters.size() > i)
-            filterData = filters[i]->bitmap()->data();
-
         const auto indexArray = reinterpret_cast<const IndexArray*>(indexArrays[i]);
         const auto indexArraySize = indexArray->size();
 
-        if (filterData == nullptr)
+        if (filters.size() <= i || filters[i] == nullptr)
         {
             resultCount += indexArraySize;
         }
         else
         {
-            for (auto j = 0u; j < indexArraySize; ++j)
-            {
-                if ((filterData[j / 8] & (1 << (j % 8))))
-                {
-                    ++resultCount;
-                }
-            }
+            resultCount += filters[i]->validCount();
         }
     }
 
@@ -114,26 +104,16 @@ void createVectorArrayResult(CpuDistanceQuery* query)
 
     for (std::size_t i = 0; i < query->targetCount(); i++)
     {
-        const uint8_t* filterData = nullptr;
-        if (filters.size() > i)
-            filterData = filters[i]->bitmap()->data();
-
         const auto vectorArray = reinterpret_cast<const VectorArray*>(vectorArrays[i]);
         const auto vectorArraySize = vectorArray->size();
 
-        if (filterData == nullptr)
+        if (filters.size() <= i || filters[i] == nullptr)
         {
             resultCount += vectorArraySize;
         }
         else
         {
-            for (xvecIndex index = 0u; index < vectorArraySize; ++index)
-            {
-                if ((filterData[index / 8] & (1 << (index % 8))))
-                {
-                    ++resultCount;
-                }
-            }
+            resultCount += filters[i]->validCount();
         }
     }
 
