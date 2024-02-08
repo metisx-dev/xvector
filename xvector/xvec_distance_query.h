@@ -78,15 +78,26 @@ xvecStatus xvecGetDistanceQueryVector(xvecDistanceQuery query, float* vector);
  * @param [in] query   distance query
  * @param [in] type    target type
  * @param [in] targets the buffer containing targets.
- *                     The targets are one of the following: vector array ID, index array ID, or vector.
+ *                     The targets are one of the following: vector array, index array.
  * @param [in] count   number of targets in the buffer
  *
  * @return xvecStatus
  */
 xvecStatus xvecSetDistanceQueryTargets(xvecDistanceQuery query_,
                                        xvecDistanceTargetType type,
-                                       const float* targets_,
+                                       const void* targets_,
                                        size_t count);
+
+/**
+ * @brief Set the filters
+ *
+ * @param [in] query   k-NN query
+ * @param [in] filters the buffers containing filters.
+ * @param [in] count   number of filters
+ *
+ * @return xvecStatus
+ */
+xvecStatus xvecSetDistanceQueryFilters(xvecDistanceQuery query, xvecBuffer* filters, size_t count);
 
 /**
  * @brief Get the result of distance query.
@@ -104,7 +115,7 @@ xvecStatus xvecSetDistanceQueryTargets(xvecDistanceQuery query_,
  *
  * @return xvecStatus
  */
-xvecStatus xvecGetDistanceResult(xvecDistanceQuery query, xvecDistanceResult* result);
+xvecStatus xvecGetDistanceQueryResult(xvecDistanceQuery query, xvecDistanceResult* result);
 
 #ifdef __cplusplus
 }

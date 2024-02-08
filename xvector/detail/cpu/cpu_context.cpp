@@ -2,7 +2,6 @@
 
 #include <mutex>
 
-#include "xvector/detail/cpu/cpu_device_buffer.hpp"
 #include "xvector/detail/cpu/cpu_distance_query.hpp"
 #include "xvector/detail/cpu/cpu_index_array.hpp"
 #include "xvector/detail/cpu/cpu_knn_query.hpp"
@@ -101,14 +100,6 @@ CpuContext::~CpuContext() noexcept
         if (deviceBuffer)
         {
             delete static_cast<Managed<CpuDeviceBuffer>*>(deviceBuffer);
-        }
-    }
-
-    for (auto hostBuffer : hostBufferRegister_.objects)
-    {
-        if (hostBuffer)
-        {
-            delete static_cast<Managed<CpuHostBuffer>*>(hostBuffer);
         }
     }
 }

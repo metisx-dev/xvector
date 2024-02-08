@@ -1,6 +1,7 @@
 #include "cpu_distance_query.hpp"
 
 #include <cassert>
+#include <iostream>
 
 #include "xvector/detail/cpu/half_float/half_float.hpp"
 #include "xvector/detail/index_array.hpp"
@@ -41,6 +42,8 @@ struct DotProduct
         for (std::size_t i = 0; i < dimension; i++)
         {
             dotProduct += a[i] * b[i];
+            // std::cout << "a[" << i << "]=" << a[i] << ", b[" << i << "]=" << b[i] << ", dimension=" << dimension <<
+            // ", dp=" << dotProduct << std::endl;
         }
         return dotProduct;
     }
@@ -66,15 +69,33 @@ void createIndexArrayResult(CpuDistanceQuery* query)
 {
     const xvecIndexArray* indexArrays = reinterpret_cast<xvecIndexArray*>(query->targets().get());
     const auto context = query->context();
+    auto& filters = query->filters();
 
     std::size_t resultCount = 0;
 
     for (std::size_t i = 0; i < query->targetCount(); i++)
     {
+        const uint8_t* filterData = nullptr;
+        if (filters.size() > i)
+            filterData = filters[i].get()->data();
+
         const auto indexArray = reinterpret_cast<const IndexArray*>(indexArrays[i]);
         const auto indexArraySize = indexArray->size();
 
-        resultCount += indexArraySize;
+        if (filterData == nullptr)
+        {
+            resultCount += indexArraySize;
+        }
+        else
+        {
+            for (auto j = 0u; j < indexArraySize; ++j)
+            {
+                if ((filterData[j / 8] & (1 << (j % 8))))
+                {
+                    ++resultCount;
+                }
+            }
+        }
     }
 
     std::shared_ptr<uint8_t[]> values(new uint8_t[sizeof(Float) * resultCount]);
@@ -87,15 +108,33 @@ void createVectorArrayResult(CpuDistanceQuery* query)
 {
     const xvecVectorArray* vectorArrays = reinterpret_cast<xvecVectorArray*>(query->targets().get());
     const auto context = query->context();
+    auto& filters = query->filters();
 
     std::size_t resultCount = 0;
 
     for (std::size_t i = 0; i < query->targetCount(); i++)
     {
+        const uint8_t* filterData = nullptr;
+        if (filters.size() > i)
+            filterData = filters[i].get()->data();
+
         const auto vectorArray = reinterpret_cast<const VectorArray*>(vectorArrays[i]);
         const auto vectorArraySize = vectorArray->size();
 
-        resultCount += vectorArraySize;
+        if (filterData == nullptr)
+        {
+            resultCount += vectorArraySize;
+        }
+        else
+        {
+            for (xvecIndex index = 0u; index < vectorArraySize; ++index)
+            {
+                if ((filterData[index / 8] & (1 << (index % 8))))
+                {
+                    ++resultCount;
+                }
+            }
+        }
     }
 
     std::shared_ptr<uint8_t[]> values(new uint8_t[sizeof(Float) * resultCount]);
@@ -120,6 +159,8 @@ void calculateByIndexArray(CpuDistanceQuery* query)
 
     const xvecIndexArray* indexArrays = reinterpret_cast<const xvecIndexArray*>(query->targets().get());
 
+    auto& filters = query->filters();
+
     for (std::size_t i = 0; i < query->targetCount(); ++i)
     {
         const IndexArray* indexArray = reinterpret_cast<IndexArray*>(indexArrays[i]);
@@ -133,11 +174,18 @@ void calculateByIndexArray(CpuDistanceQuery* query)
         const xvecIndex* indexArrayData = reinterpret_cast<const xvecIndex*>(indexArray->targetIndices()->data());
         const Float* vectorArrayData = reinterpret_cast<const Float*>(vectorArray->vectors()->data());
 
+        const uint8_t* filterData = nullptr;
+        if (filters.size() > i)
+            filterData = filters[i].get()->data();
+
         for (auto j = 0u; j < indexArraySize; ++j)
         {
-            const xvecIndex index = indexArrayData[j];
-            const Float* const targetVector = &vectorArrayData[index * dim];
-            *result++ = distance(queryVector, targetVector, dim);
+            if (!filterData || (filterData[j / 8] & (1 << (j % 8))))
+            {
+                const xvecIndex index = indexArrayData[j];
+                const Float* const targetVector = &vectorArrayData[index * dim];
+                *result++ = distance(queryVector, targetVector, dim);
+            }
         }
     }
 }
@@ -145,6 +193,8 @@ void calculateByIndexArray(CpuDistanceQuery* query)
 template <typename Float, xvecDistanceType DistanceType>
 void calculateByVectorArray(CpuDistanceQuery* query)
 {
+    createVectorArrayResult<Float>(query);
+
     using Distance =
         std::conditional_t<DistanceType == XVEC_DISTANCE_L2_DISTANCE, L2Distance<Float>, DotProduct<Float>>;
     Distance distance;
@@ -155,6 +205,7 @@ void calculateByVectorArray(CpuDistanceQuery* query)
     const Float* const queryVector = reinterpret_cast<const Float*>(query->vector().get());
     Float* result = reinterpret_cast<Float*>(query->result()->values().get());
     xvecVectorArray* vectorArrays = reinterpret_cast<xvecVectorArray*>(query->targets().get());
+    auto& filters = query->filters();
 
     for (std::size_t i = 0; i < query->targetCount(); ++i)
     {
@@ -165,12 +216,19 @@ void calculateByVectorArray(CpuDistanceQuery* query)
         assert(vectorArray->floatType() == floatType);
 
         const auto vectorArraySize = vectorArray->size();
-        const auto vectorArrayData = reinterpret_cast<const Float*>(vectorArray->vectors().get());
+        const auto vectorArrayData = reinterpret_cast<const Float*>(vectorArray->vectors()->data());
+
+        const uint8_t* filterData = nullptr;
+        if (filters.size() > i)
+            filterData = filters[i].get()->data();
 
         for (xvecIndex index = 0u; index < vectorArraySize; ++index)
         {
-            const Float* const targetVector = &vectorArrayData[index * dim];
-            *result++ = distance(queryVector, targetVector, dim);
+            if (!filterData || (filterData[index / 8] & (1 << (index % 8))))
+            {
+                const Float* const targetVector = &vectorArrayData[index * dim];
+                *result++ = distance(queryVector, targetVector, dim);
+            }
         }
     }
 }
@@ -223,7 +281,8 @@ void calculateDistance(xvec::detail::DistanceQuery* query)
     }
     else if (query->floatType() == XVEC_FLOAT16)
     {
-        calculateByType<half>(query);
+        assert(0);
+        // calculateByType<half>(query);
     }
     else
     {

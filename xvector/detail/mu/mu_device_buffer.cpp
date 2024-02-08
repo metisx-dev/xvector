@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-#include "xflare/detail/host_buffer.hpp"
+#include "xflare/detail/mu_device_buffer.hpp"
 
 namespace xvec
 {

@@ -8,10 +8,9 @@ cmake_minimum_required(VERSION 3.11)
 
 set(XVEC_SRCS
     detail/cpu/cpu_context.cpp
-    detail/cpu/cpu_device_buffer.cpp
     detail/cpu/cpu_distance_query.cpp
     detail/cpu/cpu_distance_result.cpp
-    detail/cpu/cpu_host_buffer.cpp
+    detail/cpu/cpu_device_buffer.cpp
     detail/cpu/cpu_index_array.cpp
     detail/cpu/cpu_knn_query.cpp
     detail/cpu/cpu_knn_result.cpp

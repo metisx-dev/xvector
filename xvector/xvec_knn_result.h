@@ -30,7 +30,6 @@ xvecStatus xvecReleaseKnnResult(xvecKnnResult result);
  * @brief Get k.
  *
  * @param [in]  result k-NN result
- * @param [in]  index   the index of the k-NN result
  * @param [out] k       K
  *
  * @return xvecStatus
@@ -43,7 +42,6 @@ xvecStatus xvecGetKnnResultK(xvecKnnResult result, size_t* k);
  * @details The returned scores are only valid until the k-NN result is released.
  *
  * @param [in]  result k-NN result
- * @param [in]  index   the index of the k-NN result
  * @param [out] scores  the scores
  *
  * @return xvecStatus
@@ -56,7 +54,6 @@ xvecStatus xvecGetKnnResultScores(xvecKnnResult result, float** scores);
  * @details The returned indices are only valid until the k-NN result is released.
  *
  * @param [in]  result k-NN result
- * @param [in]  index   the index of the k-NN result
  * @param [out] indices the indices
  *
  * @return xvecStatus

@@ -12,9 +12,9 @@ CpuIndexArray::CpuIndexArray(CpuVectorArray* target)
 {
 }
 
-void CpuIndexArray::setTargetIndices(SharedPtr<CpuHostBuffer> targetIndices,
+void CpuIndexArray::setTargetIndices(SharedPtr<CpuDeviceBuffer> targetIndices,
                                      std::size_t size,
-                                     SharedPtr<CpuHostBuffer> validityBitmap,
+                                     SharedPtr<CpuDeviceBuffer> validityBitmap,
                                      std::size_t validCount)
 {
     targetIndices_ = targetIndices;

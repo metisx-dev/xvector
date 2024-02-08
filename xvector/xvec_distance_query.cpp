@@ -1,10 +1,10 @@
 #include "xvec_distance_query.h"
 
 #include <cstring>
-#include <vector>
 
-#include "xvector/detail/cpu/cpu_query.hpp"
 #include "xvector/detail/distance_query.hpp"
+#include "xvector/xvec_index_array.h"
+#include "xvector/xvec_vector_array.h"
 
 extern "C"
 {
@@ -51,13 +51,45 @@ xvecStatus xvecGetDistanceQueryVector(xvecDistanceQuery query_, float* vector_)
 
 xvecStatus xvecSetDistanceQueryTargets(xvecDistanceQuery query_,
                                        xvecDistanceTargetType type,
-                                       const float* targets_,
+                                       const void* targets_,
                                        size_t count)
 {
     auto query = dynamic_cast<xvec::detail::DistanceQuery*>(reinterpret_cast<xvec::detail::CpuQuery*>(query_));
-    std::shared_ptr<uint8_t[]> targets(new uint8_t[count * query->dimension() * sizeof(float)]);
-    std::memcpy(targets.get(), targets_, count * query->dimension() * sizeof(float));
-    query->setTargets(type, targets, count);
+
+    if (targets_ == NULL || count == 0)
+    {
+        query->setTargets(type, nullptr, 0);
+        return XVEC_SUCCESS;
+    }
+
+    if (type == XVEC_DISTANCE_TARGET_VECTOR_ARRAY)
+    {
+        std::shared_ptr<uint8_t[]> targets(new uint8_t[sizeof(xvecVectorArray) * count]);
+        std::memcpy(targets.get(), targets_, sizeof(xvecVectorArray) * count);
+        query->setTargets(type, targets, count);
+    }
+    else if (type == XVEC_DISTANCE_TARGET_INDEX_ARRAY)
+    {
+        std::shared_ptr<uint8_t[]> targets(new uint8_t[sizeof(xvecIndexArray) * count]);
+        std::memcpy(targets.get(), targets_, sizeof(xvecIndexArray) * count);
+        query->setTargets(type, targets, count);
+    }
+
+    return XVEC_SUCCESS;
+}
+
+xvecStatus xvecSetDistanceQueryFilters(xvecDistanceQuery query_, xvecBuffer* filters_, size_t count)
+{
+    auto query = dynamic_cast<xvec::detail::DistanceQuery*>(reinterpret_cast<xvec::detail::CpuQuery*>(query_));
+
+    if (filters_ == NULL || count == 0)
+    {
+        query->setFilters(nullptr, 0);
+        return XVEC_SUCCESS;
+    }
+
+    auto filters = reinterpret_cast<xvec::detail::HostBuffer**>(filters_);
+    query->setFilters(filters, count);
 
     return XVEC_SUCCESS;
 }
@@ -71,7 +103,7 @@ xvecStatus xvecGetDistanceQueryTargetBufferCount(xvecDistanceQuery query_, size_
 }
 #endif
 
-xvecStatus xvecGetDistanceResult(xvecDistanceQuery query_, xvecDistanceResult* result_)
+xvecStatus xvecGetDistanceQueryResult(xvecDistanceQuery query_, xvecDistanceResult* result_)
 {
     auto query = dynamic_cast<xvec::detail::DistanceQuery*>(reinterpret_cast<xvec::detail::CpuQuery*>(query_));
     auto result = query->result();

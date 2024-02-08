@@ -63,6 +63,21 @@ public:
         return targetCount_;
     }
 
+    void setFilters(HostBuffer** filters, size_t count) noexcept
+    {
+        filters_.clear();
+
+        for (size_t i = 0; i < count; i++)
+        {
+            filters_.push_back(filters[i]);
+        }
+    }
+
+    const std::vector<SharedPtr<HostBuffer>>& filters() const noexcept
+    {
+        return filters_;
+    }
+
     SharedPtr<CpuDistanceResult> result()
     {
         return result_;
@@ -90,6 +105,7 @@ private:
     std::size_t targetCount_ = 0;
     std::shared_ptr<uint8_t[]> vector_;
     std::shared_ptr<uint8_t[]> targets_;
+    std::vector<SharedPtr<HostBuffer>> filters_;
     SharedPtr<CpuDistanceResult> result_;
 };
 

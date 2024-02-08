@@ -13,10 +13,10 @@ namespace detail
 
 namespace
 {
-SharedPtr<CpuHostBuffer> createValidityBitmap(CpuContext* context, std::size_t size, std::size_t validCount)
+SharedPtr<CpuDeviceBuffer> createValidityBitmap(CpuContext* context, std::size_t size, std::size_t validCount)
 {
     auto bufferSize = (size + 7) / 8;
-    auto validityBitmap = CpuHostBuffer::create(context, bufferSize);
+    auto validityBitmap = CpuDeviceBuffer::create(context, bufferSize);
 
     std::size_t validBytes = validCount / 8;
     std::memset(validityBitmap->data(), -1, validBytes);
@@ -34,14 +34,14 @@ SharedPtr<CpuHostBuffer> createValidityBitmap(CpuContext* context, std::size_t s
     return validityBitmap;
 }
 
-SharedPtr<CpuHostBuffer> expandValidityBitmap(CpuContext* context,
+SharedPtr<CpuDeviceBuffer> expandValidityBitmap(CpuContext* context,
                                               std::size_t size,
-                                              SharedPtr<CpuHostBuffer> oldValidityBitmap)
+                                              SharedPtr<CpuDeviceBuffer> oldValidityBitmap)
 {
     auto bufferSize = (size + 7) / 8;
     if (bufferSize > oldValidityBitmap->size())
     {
-        auto validityBitmap = CpuHostBuffer::create(context, bufferSize);
+        auto validityBitmap = CpuDeviceBuffer::create(context, bufferSize);
 
         memcpy(validityBitmap->data(), oldValidityBitmap->data(), oldValidityBitmap->size());
         memset(validityBitmap->data() + oldValidityBitmap->size(), 0, bufferSize - oldValidityBitmap->size());
@@ -51,9 +51,9 @@ SharedPtr<CpuHostBuffer> expandValidityBitmap(CpuContext* context,
     return oldValidityBitmap;
 }
 
-SharedPtr<CpuHostBuffer> expandBuffer(CpuContext* context, SharedPtr<CpuHostBuffer> oldBuffer, std::size_t newSize)
+SharedPtr<CpuDeviceBuffer> expandBuffer(CpuContext* context, SharedPtr<CpuDeviceBuffer> oldBuffer, std::size_t newSize)
 {
-    auto newBuffer = CpuHostBuffer::create(context, newSize);
+    auto newBuffer = CpuDeviceBuffer::create(context, newSize);
     memcpy(newBuffer->data(), oldBuffer->data(), oldBuffer->size());
     return newBuffer;
 }
@@ -66,13 +66,13 @@ CpuVectorArray::CpuVectorArray(CpuContext* context, xvecFloatType floatType, std
 {
 }
 
-void CpuVectorArray::setVectors(SharedPtr<CpuHostBuffer> vectors, std::size_t size)
+void CpuVectorArray::setVectors(SharedPtr<CpuDeviceBuffer> vectors, std::size_t size)
 {
     vectors_ = vectors;
     size_ = size;
 }
 
-void CpuVectorArray::setValidityBitmap(SharedPtr<CpuHostBuffer> validityBitmap, std::size_t validCount)
+void CpuVectorArray::setValidityBitmap(SharedPtr<CpuDeviceBuffer> validityBitmap, std::size_t validCount)
 {
     validityBitmap_ = validityBitmap;
     validCount_ = validCount;
@@ -96,10 +96,10 @@ void CpuVectorArray::setValidityBitmap(SharedPtr<CpuHostBuffer> validityBitmap, 
     }
 }
 
-SharedPtr<CpuHostBuffer> CpuVectorArray::vector(std::size_t index)
+SharedPtr<CpuDeviceBuffer> CpuVectorArray::vector(std::size_t index)
 {
     std::size_t floatSize = floatType() == XVEC_FLOAT32 ? sizeof(float) : sizeof(half);
-    auto vector = CpuHostBuffer::create(context(), dimension() * floatSize);
+    auto vector = CpuDeviceBuffer::create(context(), dimension() * floatSize);
 
     uint8_t* dst = vector->data();
     uint8_t* src = vectors_->data() + index * dimension() * floatSize;
@@ -125,8 +125,8 @@ bool CpuVectorArray::valid(std::size_t position) const
     return bitmap[position / 8] & (1 << (position % 8));
 }
 
-void CpuVectorArray::updateVectors(SharedPtr<CpuHostBuffer> positions,
-                                   SharedPtr<CpuHostBuffer> vectors,
+void CpuVectorArray::updateVectors(SharedPtr<CpuDeviceBuffer> positions,
+                                   SharedPtr<CpuDeviceBuffer> vectors,
                                    std::size_t size)
 {
     const xvecIndex* positionsData = reinterpret_cast<const xvecIndex*>(positions->data());
@@ -154,10 +154,10 @@ void CpuVectorArray::updateVectors(SharedPtr<CpuHostBuffer> positions,
     }
 }
 
-SharedPtr<CpuHostBuffer> CpuVectorArray::insertVectors(SharedPtr<CpuHostBuffer> vectors, std::size_t size)
+SharedPtr<CpuDeviceBuffer> CpuVectorArray::insertVectors(SharedPtr<CpuDeviceBuffer> vectors, std::size_t size)
 {
     std::size_t floatSize = floatType() == XVEC_FLOAT32 ? sizeof(float) : sizeof(half);
-    auto positions = CpuHostBuffer::create(context(), dimension() * floatSize);
+    auto positions = CpuDeviceBuffer::create(context(), dimension() * floatSize);
 
     if (validityBitmap_ == nullptr)
     {
@@ -214,7 +214,7 @@ SharedPtr<CpuHostBuffer> CpuVectorArray::insertVectors(SharedPtr<CpuHostBuffer> 
     return positions;
 }
 
-void CpuVectorArray::deleteVectors(SharedPtr<CpuHostBuffer> positions, std::size_t size)
+void CpuVectorArray::deleteVectors(SharedPtr<CpuDeviceBuffer> positions, std::size_t size)
 {
     if (size == 0)
         return;

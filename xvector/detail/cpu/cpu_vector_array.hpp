@@ -26,16 +26,16 @@ public:
         return dimension_;
     }
 
-    void setVectors(SharedPtr<CpuHostBuffer> vectors, std::size_t size);
+    void setVectors(SharedPtr<CpuDeviceBuffer> vectors, std::size_t size);
 
-    SharedPtr<CpuHostBuffer> vectors() const
+    SharedPtr<CpuDeviceBuffer> vectors() const
     {
         return vectors_;
     }
 
-    void setValidityBitmap(SharedPtr<CpuHostBuffer> validityBitmap, std::size_t validCount);
+    void setValidityBitmap(SharedPtr<CpuDeviceBuffer> validityBitmap, std::size_t validCount);
 
-    SharedPtr<CpuHostBuffer> validityBitmap() const
+    SharedPtr<CpuDeviceBuffer> validityBitmap() const
     {
         return validityBitmap_;
     }
@@ -60,15 +60,15 @@ public:
         customData_ = customData;
     }
 
-    SharedPtr<CpuHostBuffer> vector(std::size_t position);
+    SharedPtr<CpuDeviceBuffer> vector(std::size_t position);
 
     bool valid(std::size_t position) const;
 
-    void updateVectors(SharedPtr<CpuHostBuffer> positions, SharedPtr<CpuHostBuffer> vectors, std::size_t size);
+    void updateVectors(SharedPtr<CpuDeviceBuffer> positions, SharedPtr<CpuDeviceBuffer> vectors, std::size_t size);
 
-    SharedPtr<CpuHostBuffer> insertVectors(SharedPtr<CpuHostBuffer> vectors, std::size_t size);
+    SharedPtr<CpuDeviceBuffer> insertVectors(SharedPtr<CpuDeviceBuffer> vectors, std::size_t size);
 
-    void deleteVectors(SharedPtr<CpuHostBuffer> positions, std::size_t size);
+    void deleteVectors(SharedPtr<CpuDeviceBuffer> positions, std::size_t size);
 
 private:
     CpuVectorArray(CpuContext* context, xvecFloatType floatType, std::size_t dimension);
@@ -80,8 +80,8 @@ private:
     std::size_t dimension_;
     std::size_t size_ = 0;
     std::size_t validCount_ = 0;
-    SharedPtr<CpuHostBuffer> vectors_ = nullptr;
-    SharedPtr<CpuHostBuffer> validityBitmap_ = nullptr;
+    SharedPtr<CpuDeviceBuffer> vectors_ = nullptr;
+    SharedPtr<CpuDeviceBuffer> validityBitmap_ = nullptr;
     void* customData_;
     std::size_t freePosition_;
 };

@@ -13,14 +13,13 @@ namespace detail
 template <typename Derived>
 class Managed;
 
-class CpuDeviceBuffer;
 class CpuVectorArray;
 class CpuIndexArray;
 class CpuKnnQuery;
 class CpuKnnResult;
 class CpuDistanceQuery;
 class CpuDistanceResult;
-class CpuHostBuffer;
+class CpuDeviceBuffer;
 
 class CpuContext
 {
@@ -34,7 +33,7 @@ public:
     CpuContext(const CpuContext& src) = delete;
     CpuContext& operator=(const CpuContext& src) = delete;
 
-    // xvecBufferId register_(CpuHostBuffer* buffer) noexcept;
+    // xvecBufferId register_(CpuDeviceBuffer* buffer) noexcept;
     // void unregister(xvecBufferId id) noexcept;
 
     struct Register
@@ -63,7 +62,6 @@ public:
     }
 
 private:
-    Register hostBufferRegister_;
     Register deviceBufferRegister_;
     Register vectorArrayRegister_;
     Register indexArrayRegister_;
@@ -72,12 +70,6 @@ private:
     Register distanceQueryRegister_;
     Register distanceResultRegister_;
 };
-
-template <>
-inline CpuContext::Register& CpuContext::register_<CpuHostBuffer>() noexcept
-{
-    return hostBufferRegister_;
-}
 
 template <>
 inline CpuContext::Register& CpuContext::register_<CpuDeviceBuffer>() noexcept

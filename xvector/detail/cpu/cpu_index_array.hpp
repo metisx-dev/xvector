@@ -3,8 +3,8 @@
 #pragma once
 
 #include "xvector/detail/cpu/cpu_vector_array.hpp"
+#include "xvector/detail/device_buffer.hpp"
 #include "xvector/detail/factory.hpp"
-#include "xvector/detail/host_buffer.hpp"
 #include "xvector/detail/managed.hpp"
 
 namespace xvec
@@ -21,17 +21,17 @@ public:
         return target_.get();
     }
 
-    void setTargetIndices(SharedPtr<CpuHostBuffer> targetIndices,
+    void setTargetIndices(SharedPtr<CpuDeviceBuffer> targetIndices,
                           size_t size,
-                          SharedPtr<CpuHostBuffer> validityBitmap,
+                          SharedPtr<CpuDeviceBuffer> validityBitmap,
                           size_t validCount);
 
-    SharedPtr<CpuHostBuffer> targetIndices() const noexcept
+    SharedPtr<CpuDeviceBuffer> targetIndices() const noexcept
     {
         return targetIndices_;
     }
 
-    SharedPtr<CpuHostBuffer> validityBitmap() const noexcept
+    SharedPtr<CpuDeviceBuffer> validityBitmap() const noexcept
     {
         return validityBitmap_;
     }
@@ -65,8 +65,8 @@ private:
     CpuIndexArray& operator=(const CpuIndexArray& src) = delete;
 
     SharedPtr<CpuVectorArray> target_;
-    SharedPtr<CpuHostBuffer> targetIndices_ = nullptr;
-    SharedPtr<CpuHostBuffer> validityBitmap_ = nullptr;
+    SharedPtr<CpuDeviceBuffer> targetIndices_ = nullptr;
+    SharedPtr<CpuDeviceBuffer> validityBitmap_ = nullptr;
     std::size_t size_ = 0;
     std::size_t validCount_;
     std::uintptr_t customData_;

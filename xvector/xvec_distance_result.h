@@ -25,20 +25,26 @@ typedef struct xvecDistanceResultTag_* xvecDistanceResult;
 xvecStatus xvecReleaseDistanceResult(xvecDistanceResult result);
 
 /**
- * @brief Get result buffer.
+ * @brief Get the values of the distance query
  *
- * @details The result buffer contains the distance values.
- *          The type of each entry is either float16 or float32.
+ * @details The returned indices are only valid until the k-NN result is released.
  *
- *          The returned buffer must be released by `xvecReleaseBuffer()`, when it is no longer needed,
- *          otherwise it will cause a memory leak.
- *
- * @param [in]  result distance result
+ * @param [in]  result result
  * @param [out] values the distance values
  *
  * @return xvecStatus
  */
-xvecStatus xvecGetDistanceResultValues(xvecDistanceResult result, xvecBuffer* values);
+xvecStatus xvecGetDistanceResultValues(xvecDistanceResult result, float** values);
+
+/**
+ * @brief Get the number of values of the distance result
+ *
+ * @param [in]  result result
+ * @param [out] size   number of values
+ *
+ * @return xvecStatus
+ */
+xvecStatus xvecGetDistanceResultSize(xvecDistanceResult result, size_t* size);
 
 #ifdef __cplusplus
 }

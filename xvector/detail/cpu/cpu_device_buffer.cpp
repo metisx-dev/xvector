@@ -1,14 +1,12 @@
-#include "cpu_device_buffer.hpp"
-
 #include <cstdlib>
 
-#include "xvector/detail/host_buffer.hpp"
+#include "cpu_device_buffer.hpp"
+#include "cpu_context.hpp"
 
 namespace xvec
 {
 namespace detail
 {
-
 namespace
 {
 std::shared_ptr<uint8_t> make_shared_array(std::size_t size)
@@ -17,29 +15,33 @@ std::shared_ptr<uint8_t> make_shared_array(std::size_t size)
 }
 }  // namespace
 
-CpuDeviceBuffer::CpuDeviceBuffer(Context* context) noexcept
+CpuDeviceBuffer::CpuDeviceBuffer(Context* context)
     : Managed<CpuDeviceBuffer>(context),
       size_(0)
 {
 }
 
-CpuDeviceBuffer::CpuDeviceBuffer(Context* context, size_t size) noexcept
+CpuDeviceBuffer::CpuDeviceBuffer(Context* context, std::size_t size, std::size_t offset)
     : Managed<CpuDeviceBuffer>(context),
       base_(make_shared_array(size)),
       size_(size),
-      offset_(0)
+      offset_(offset)
 {
 }
 
-void CpuDeviceBuffer::syncToDevice(CpuHostBuffer* hostBuffer) noexcept
+CpuDeviceBuffer::CpuDeviceBuffer(Context* context,
+                             std::shared_ptr<uint8_t> base,
+                             std::size_t size,
+                             std::size_t offset) noexcept
+    : Managed<CpuDeviceBuffer>(context),
+      base_(base),
+      size_(size),
+      offset_(offset)
 {
-    base_ = hostBuffer->base();
-    offset_ = hostBuffer->offset();
 }
 
-void CpuDeviceBuffer::syncFromDevice(CpuHostBuffer* hostBuffer) noexcept
+CpuDeviceBuffer::~CpuDeviceBuffer() noexcept
 {
-    hostBuffer->setData(base_, offset_);
 }
 
 }  // namespace detail
