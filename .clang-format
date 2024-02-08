@@ -1,0 +1,53 @@
+# Run manually to reformat a file:
+# clang-format -i --style=file <file>
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+Language: Cpp
+BasedOnStyle: Google
+BreakBeforeBraces: Allman
+AccessModifierOffset: -4
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: None #Inline
+AllowShortLoopsOnASingleLine: false
+PackConstructorInitializers: Never
+ColumnLimit: 120
+BinPackArguments: false
+BinPackParameters: false
+ExperimentalAutoDetectBinPacking: false
+AllowAllParametersOfDeclarationOnNextLine: false
+SeparateDefinitionBlocks: Always
+
+# Brace
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: false
+  BeforeWhile: true
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+
+# Indent
+IndentAccessModifiers: false
+IndentCaseBlocks: false
+IndentCaseLabels: false
+IndentExternBlock: NoIndent
+IndentGotoLabels: false
+IndentPPDirectives: None # None, AfterHash, BeforeHash
+#IndentRequiresClause: true
+IndentWidth: 4
+#InsertBraces: false

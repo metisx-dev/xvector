@@ -1,0 +1,23 @@
+#pragma once
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+typedef enum xvecStatus
+{
+    XVEC_SUCCESS = 0,
+    XVEC_ERROR_UNKNOWN,
+    XVEC_ERROR_UNSUPPORTED_DATATYPE,
+    XVEC_ERROR_OUT_OF_MEMORY,
+    XVEC_ERROR_INVALID_PTR,
+    XVEC_ERROR_INVALID_VECTOR_OBJ,
+    XVEC_ERROR_INVALID_VECTOR_DIMENSION,
+    XVEC_ERROR_INVALID_TYPE,
+    XVEC_ERROR_INVALID_PARAMETER,
+    XVEC_ERROR_OUT_OF_RANGE,
+} xvecStatus;
+
+#ifdef __cplusplus
+}
+#endif

@@ -1,7 +1,7 @@
-project(xvector_test)
+cmake_minimum_required(VERSION 3.11)
 
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/xvector_test.cpp test_main.cpp)
-target_include_directories(${PROJECT_NAME} PRIVATE ${local_include})
-target_link_libraries(${PROJECT_NAME} PRIVATE gtest dl xvector)
+add_executable(xvec-unit-test
+    xvector_test.cpp
+    test_main.cpp)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${ROOT_DIR}/bin")
+target_link_libraries(xvec-unit-test PRIVATE gtest dl xvector)
