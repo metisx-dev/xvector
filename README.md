@@ -11,6 +11,8 @@ mkdir build
 cd build
 cmake ..
 cmake --build .
+cd example
+./example
 ```
 
 ## Status
