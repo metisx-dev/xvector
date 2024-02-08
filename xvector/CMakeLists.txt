@@ -11,6 +11,7 @@ set(XVEC_SRCS
     detail/cpu/cpu_distance_query.cpp
     detail/cpu/cpu_distance_result.cpp
     detail/cpu/cpu_device_buffer.cpp
+    detail/cpu/cpu_filter.cpp
     detail/cpu/cpu_index_array.cpp
     detail/cpu/cpu_knn_query.cpp
     detail/cpu/cpu_knn_result.cpp
@@ -20,6 +21,7 @@ set(XVEC_SRCS
     xvec_context.cpp
     xvec_distance_query.cpp
     xvec_distance_result.cpp
+    xvec_filter.cpp
     xvec_index_array.cpp
     xvec_knn_query.cpp
     xvec_knn_result.cpp

@@ -15,6 +15,7 @@ class Managed;
 
 class CpuVectorArray;
 class CpuIndexArray;
+class CpuFilter;
 class CpuKnnQuery;
 class CpuKnnResult;
 class CpuDistanceQuery;
@@ -65,6 +66,7 @@ private:
     Register deviceBufferRegister_;
     Register vectorArrayRegister_;
     Register indexArrayRegister_;
+    Register filterRegister_;
     Register knnQueryRegister_;
     Register knnResultRegister_;
     Register distanceQueryRegister_;
@@ -87,6 +89,12 @@ template <>
 inline CpuContext::Register& CpuContext::register_<CpuIndexArray>() noexcept
 {
     return indexArrayRegister_;
+}
+
+template <>
+inline CpuContext::Register& CpuContext::register_<CpuFilter>() noexcept
+{
+    return filterRegister_;
 }
 
 template <>

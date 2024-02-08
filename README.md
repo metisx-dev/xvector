@@ -32,7 +32,7 @@ if(status != XVEC_SUCCESS)
 
 ## Context
 
-Context는 Vector 가속 연산을 수행하기 위해 필요한 자원/상태를 초기화 및 관리하는 인스턴스입니다. Context가 파괴되면 Context와 연관된 모든 객체도 파괴됩니다. 객체들은 `xvecBuffer`, `xvecVectorArray`, `xvecIndexArray`, `xvecKnnQuery`, `xvecKnnResult`, `xvecDistanceQuery`, `xvecDistanceResult`가 있습니다.
+Context는 Vector 가속 연산을 수행하기 위해 필요한 자원/상태를 초기화 및 관리하는 인스턴스입니다. Context가 파괴되면 Context와 연관된 모든 객체도 파괴됩니다. 객체들은 `xvecBuffer`, `xvecVectorArray`, `xvecIndexArray`, `xvecFilter`, `xvecKnnQuery`, `xvecKnnResult`, `xvecDistanceQuery`, `xvecDistanceResult`가 있습니다.
 
 ```c
 #include <xvector.h>
@@ -194,6 +194,8 @@ xvecGetKnnResultIndices(result, &indices); // Get the indices of the top-k vecto
 xvecVectorArray* vectorArrays;
 xvecGetKnnResultVectorArrays(result, &vectorArrays); // Get the vector arrays of the top-k vectors sorted by score.
 
+...
+
 xvecReleaseKnnResult(result); // Release the result.
 ```
 
@@ -234,6 +236,10 @@ xvecReleaseDistanceQuery(query);  // After getting the result, the query can be 
 
 float* distances;
 xvecGetDistanceResultValues(result, &distance); // Get the distance values
+
+...
+
+xvecReleaseDistanceReault(result); // Release the result
 ```
 
 현재는 Dot Product 만 지원합니다. 추후 L2 Distance도 지원할 계획입니다. Cosine Similarity를 구하고 싶다면 VectorArray에 Normalize된 Vector들을 저장하고 Dot Product를 사용하세요. 추후에는 Normalization에 대한 가속 API도 제공할 예정입니다.
@@ -250,27 +256,41 @@ Filter를 Query에 설정된 Target Array 수 보다 적게 설정할 경우 남
 
 ```c
 ...
-size_t filterSize = (vectorCount + 7) / 8;
 
-xvecBuffer filterBuf;
-xvecCreateBuffer(&filterBuf, context, filterSize);
+size_t filterSize = (vectorCount + 7) / 8;
+size_t validCount = 0;
+uint8_t bitmap[filterSize];
+
+memset(bitmap, 0, filterSize);
 
 // Intent to count only even-positioned vectors
-uint8_t filter[filterSize];
-memset(filter, 0, filterSize);
 for (size_t i = 0; i < vectorCount; i += 2)
-    filter[i / 8] |= 1 << (i % 8);
+{
+    bitmap[i / 8] |= 1 << (i % 8);
+    ++validCount;
+}
 
-xvecCopyToBuffer(filterBuf, filter, 0, filterSize);
+xvecBuffer bitmapBuf;
+xvecCreateBuffer(&bitmapBuf, context, filterSize); // Create a buffer to store bitmap
+
+xvecCopyToBuffer(bitmapBuf, bitmap, 0, filterSize); // Copy bitmap to the device
+
+xvecFilter filter;
+xvecCreateFilter(&filter, context); // Create Filter
+
+xvecSetFilterBitmap(filter, bitmapBuf, validCount); // Set bitmap buffer to the filter.
+
+xvecReleaseBuffer(bitmapBuf); // The buffer can be released immediately.
 
 // Suppose there are three target arrays.
 //  - The first array does not use a filter.
 //  - For the second array, only the even-positioned vectors participate in the calculation.
 //  - The third array does not use a filter.
-xvecBuffer filters[] = { NULL, filterBuf };
-xvecSetKnnQueryFilters(query, filters, 2);
+xvecBuffer filters[] = { NULL, filter };
 
-xvecReleaseBuffer(filterBuf);
+xvecSetKnnQueryFilters(query, filters, 2); // Set the filters to the query.
+
+xvecReleaseFilter(filter); // The filter can be released immediately.
 
 ...
 

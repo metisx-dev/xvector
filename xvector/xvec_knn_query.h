@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 
+#include "xvec_filter.h"
 #include "xvec_knn_result.h"
 #include "xvec_query.h"  // IWYU pragma: export
 
@@ -104,12 +105,12 @@ xvecStatus xvecSetKnnQueryTargets(xvecKnnQuery query, xvecKnnTargetType type, co
  * @brief Set the filters
  *
  * @param [in] query   k-NN query
- * @param [in] filters the buffers containing filters.
+ * @param [in] filters filters.
  * @param [in] count   number of filters
  *
  * @return xvecStatus
  */
-xvecStatus xvecSetKnnQueryFilters(xvecKnnQuery query, xvecBuffer* filters, size_t count);
+xvecStatus xvecSetKnnQueryFilters(xvecKnnQuery query, xvecFilter* filters, size_t count);
 
 /**
  * @brief Get the topK.

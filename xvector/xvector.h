@@ -4,6 +4,7 @@
 #include "xvec_buffer.h"
 #include "xvec_distance_query.h"
 #include "xvec_distance_result.h"
+#include "xvec_filter.h"
 #include "xvec_float_type.h"
 #include "xvec_index_array.h"
 #include "xvec_knn_query.h"

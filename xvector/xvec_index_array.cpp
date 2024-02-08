@@ -39,7 +39,7 @@ xvecStatus xvecSetIndexArrayIndices(xvecIndexArray indexArray_, xvecBuffer targe
     auto indexArray = reinterpret_cast<xvec::detail::IndexArray*>(indexArray_);
     auto targetIndices = reinterpret_cast<xvec::detail::HostBuffer*>(targetIndices_);
     // auto validityBitmap = reinterpret_cast<xvec::detail::HostBuffer*>(validityBitmap_);
-    indexArray->setTargetIndices(targetIndices, size, nullptr, 0);
+    indexArray->setIndices(targetIndices, size);
     return XVEC_SUCCESS;
 }
 
@@ -47,7 +47,7 @@ xvecStatus xvecGetIndexArrayIndices(xvecIndexArray indexArray_, xvecBuffer* targ
 {
     auto indexArray = reinterpret_cast<xvec::detail::IndexArray*>(indexArray_);
 
-    auto targetIndices = indexArray->targetIndices();
+    auto targetIndices = indexArray->indices();
     if (targetIndices)
         targetIndices->retain();
     *targetIndices_ = reinterpret_cast<xvecBuffer>(targetIndices.get());
@@ -74,17 +74,5 @@ xvecStatus xvecGetIndexArrayCustomData(xvecIndexArray indexArray_, uintptr_t* cu
     *customData = indexArray->customData();
     return XVEC_SUCCESS;
 }
-
-#if 0
-xvecStatus xvecGetIndexArrayValidityBitmap(xvecIndexArray indexArray_, xvecBuffer* validityBitmap_)
-{
-    auto indexArray = reinterpret_cast<xvec::detail::IndexArray*>(indexArray_);
-    auto validityBitmap = indexArray->validityBitmap();
-    if (validityBitmap)
-        validityBitmap->retain();
-    *validityBitmap_ = reinterpret_cast<xvecBuffer>(validityBitmap.get());
-    return XVEC_SUCCESS;
-}
-#endif
 
 }  // extern "C"

@@ -78,7 +78,7 @@ xvecStatus xvecSetDistanceQueryTargets(xvecDistanceQuery query_,
     return XVEC_SUCCESS;
 }
 
-xvecStatus xvecSetDistanceQueryFilters(xvecDistanceQuery query_, xvecBuffer* filters_, size_t count)
+xvecStatus xvecSetDistanceQueryFilters(xvecDistanceQuery query_, xvecFilter* filters_, size_t count)
 {
     auto query = dynamic_cast<xvec::detail::DistanceQuery*>(reinterpret_cast<xvec::detail::CpuQuery*>(query_));
 
@@ -88,20 +88,11 @@ xvecStatus xvecSetDistanceQueryFilters(xvecDistanceQuery query_, xvecBuffer* fil
         return XVEC_SUCCESS;
     }
 
-    auto filters = reinterpret_cast<xvec::detail::HostBuffer**>(filters_);
+    auto filters = reinterpret_cast<xvec::detail::Filter**>(filters_);
     query->setFilters(filters, count);
 
     return XVEC_SUCCESS;
 }
-
-#if 0
-xvecStatus xvecGetDistanceQueryTargetBufferCount(xvecDistanceQuery query_, size_t* count)
-{
-    auto query = reinterpret_cast<xvec::detail::DistanceQuery*>(query_);
-    *count = query->targetBuffers().size();
-    return XVEC_SUCCESS;
-}
-#endif
 
 xvecStatus xvecGetDistanceQueryResult(xvecDistanceQuery query_, xvecDistanceResult* result_)
 {

@@ -156,20 +156,20 @@ void searchByIndexArray(CpuKnnQuery* query)
         assert(vectorArray->floatType() == floatType);
 
         const auto indexArraySize = indexArray->size();
-        const xvecIndex* indexArrayData = reinterpret_cast<const xvecIndex*>(indexArray->targetIndices()->data());
+        const xvecIndex* indexArrayData = reinterpret_cast<const xvecIndex*>(indexArray->indices()->data());
         const Float* vectorArrayData = reinterpret_cast<const Float*>(vectorArray->vectors()->data());
 
         const uint8_t* filterData = nullptr;
         if (filters.size() > i)
-            filterData = filters[i].get()->data();
+            filterData = filters[i]->bitmap()->data();
 
         for (auto j = 0u; j < indexArraySize; ++j)
         {
-            //if (filterData)
+            // if (filterData)
             //{
-            //    const xvecIndex index = indexArrayData[j];
-            //    std::cout << "[" << index << "] " << (uint32_t)(filterData[j / 8] & (1 << (j % 8))) << std::endl;
-            //}
+            //     const xvecIndex index = indexArrayData[j];
+            //     std::cout << "[" << index << "] " << (uint32_t)(filterData[j / 8] & (1 << (j % 8))) << std::endl;
+            // }
 
             if (!filterData || (filterData[j / 8] & (1 << (j % 8))))
             {
@@ -213,7 +213,7 @@ void searchByVectorArray(CpuKnnQuery* query)
 
         const uint8_t* filterData = nullptr;
         if (filters.size() > i)
-            filterData = filters[i].get()->data();
+            filterData = filters[i]->bitmap()->data();
 
         for (xvecIndex index = 0u; index < vectorArraySize; ++index)
         {

@@ -128,23 +128,32 @@ int main()
 
         size_t filterSize = (vectorCount + 7) / 8;
 
-        xvecBuffer filterBuf;
-        EXIT_ON_ERROR(xvecCreateBuffer(&filterBuf, context, filterSize));
+        xvecBuffer bitmapBuf;
+        EXIT_ON_ERROR(xvecCreateBuffer(&bitmapBuf, context, filterSize));
 
-        uint8_t filter[filterSize];
-        memset(filter, 0, filterSize);
+        uint8_t bitmap[filterSize];
+        memset(bitmap, 0, filterSize);
 
         // Only even indices are calculated
+        size_t validCount = 0;
         for (size_t i = 0; i < vectorCount; i += 2)
         {
-            filter[i / 8] |= 1 << (i % 8);
+            bitmap[i / 8] |= 1 << (i % 8);
+            ++validCount;
         }
 
-        EXIT_ON_ERROR(xvecCopyToBuffer(filterBuf, filter, 0, filterSize));
+        EXIT_ON_ERROR(xvecCopyToBuffer(bitmapBuf, bitmap, 0, filterSize));
 
-        EXIT_ON_ERROR(xvecSetDistanceQueryFilters(query, &filterBuf, 1));
+        xvecFilter filter;
+        EXIT_ON_ERROR(xvecCreateFilter(&filter, context));
 
-        xvecReleaseBuffer(filterBuf);
+        EXIT_ON_ERROR(xvecSetFilterBitmap(filter, bitmapBuf, validCount));
+
+        xvecReleaseBuffer(bitmapBuf);
+
+        EXIT_ON_ERROR(xvecSetDistanceQueryFilters(query, &filter, 1));
+
+        xvecReleaseFilter(filter);
 
         EXIT_ON_ERROR(xvecExecuteQuery(&query, 1));
 
@@ -182,23 +191,32 @@ int main()
 
         size_t filterSize = (vectorCount + 7) / 8;
 
-        xvecBuffer filterBuf;
-        EXIT_ON_ERROR(xvecCreateBuffer(&filterBuf, context, filterSize));
+        xvecBuffer bitmapBuf;
+        EXIT_ON_ERROR(xvecCreateBuffer(&bitmapBuf, context, filterSize));
 
-        uint8_t filter[filterSize];
-        memset(filter, 0, filterSize);
+        uint8_t bitmap[filterSize];
+        memset(bitmap, 0, filterSize);
 
         // Only even indices are calculated
+        size_t validCount = 0;
         for (size_t i = 0; i < vectorCount; i += 2)
         {
-            filter[i / 8] |= 1 << (i % 8);
+            bitmap[i / 8] |= 1 << (i % 8);
+            ++validCount;
         }
 
-        EXIT_ON_ERROR(xvecCopyToBuffer(filterBuf, filter, 0, filterSize));
+        EXIT_ON_ERROR(xvecCopyToBuffer(bitmapBuf, bitmap, 0, filterSize));
 
-        EXIT_ON_ERROR(xvecSetKnnQueryFilters(query, &filterBuf, 1));
+        xvecFilter filter;
+        EXIT_ON_ERROR(xvecCreateFilter(&filter, context));
 
-        xvecReleaseBuffer(filterBuf);
+        EXIT_ON_ERROR(xvecSetFilterBitmap(filter, bitmapBuf, validCount));
+
+        xvecReleaseBuffer(bitmapBuf);
+
+        EXIT_ON_ERROR(xvecSetKnnQueryFilters(query, &filter, 1));
+
+        xvecReleaseFilter(filter);
 
         EXIT_ON_ERROR(xvecExecuteQuery(&query, 1));
 
@@ -326,29 +344,44 @@ int main()
         xvecReleaseKnnResult(result);
     }
 
-    xvecBuffer filters[2];
+    xvecFilter filters[2];
 
     for (int i = 0; i < 2; i++)
     {
         size_t filterSize = (25 + 7) / 8;
 
-        EXIT_ON_ERROR(xvecCreateBuffer(&filters[i], context, filterSize));
+        xvecBuffer bitmapBuf;
 
-        uint8_t filter[filterSize];
-        memset(filter, 0, filterSize);
+        EXIT_ON_ERROR(xvecCreateBuffer(&bitmapBuf, context, filterSize));
 
+        uint8_t bitmap[filterSize];
+        memset(bitmap, 0, filterSize);
+
+        size_t validCount = 0;
         if (i == 0)
         {
             for (size_t j = 0; j < 13; ++j)
-                filter[j / 8] |= 1 << (j % 8);
+            {
+                bitmap[j / 8] |= 1 << (j % 8);
+                ++validCount;
+            }
         }
         else
         {
             for (size_t j = 13; j < 25; ++j)
-                filter[j / 8] |= 1 << (j % 8);
+            {
+                bitmap[j / 8] |= 1 << (j % 8);
+                ++validCount;
+            }
         }
 
-        EXIT_ON_ERROR(xvecCopyToBuffer(filters[i], filter, 0, filterSize));
+        EXIT_ON_ERROR(xvecCopyToBuffer(bitmapBuf, bitmap, 0, filterSize));
+
+        EXIT_ON_ERROR(xvecCreateFilter(&filters[i], context));
+
+        EXIT_ON_ERROR(xvecSetFilterBitmap(filters[i], bitmapBuf, validCount));
+
+        EXIT_ON_ERROR(xvecReleaseBuffer(bitmapBuf));
     }
 
     {

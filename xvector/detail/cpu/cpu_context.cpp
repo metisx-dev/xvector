@@ -3,6 +3,7 @@
 #include <mutex>
 
 #include "xvector/detail/cpu/cpu_distance_query.hpp"
+#include "xvector/detail/cpu/cpu_filter.hpp"
 #include "xvector/detail/cpu/cpu_index_array.hpp"
 #include "xvector/detail/cpu/cpu_knn_query.hpp"
 #include "xvector/detail/cpu/cpu_vector_array.hpp"
@@ -76,6 +77,14 @@ CpuContext::~CpuContext() noexcept
         if (distanceResult)
         {
             delete static_cast<Managed<CpuDistanceResult>*>(distanceResult);
+        }
+    }
+
+    for (auto filter : filterRegister_.objects)
+    {
+        if (filter)
+        {
+            delete static_cast<Managed<CpuFilter>*>(filter);
         }
     }
 

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "xvec_distance_result.h"
+#include "xvec_filter.h"
 #include "xvec_internal.h"
 #include "xvec_query.h"  // IWYU pragma: export
 
@@ -97,7 +98,7 @@ xvecStatus xvecSetDistanceQueryTargets(xvecDistanceQuery query_,
  *
  * @return xvecStatus
  */
-xvecStatus xvecSetDistanceQueryFilters(xvecDistanceQuery query, xvecBuffer* filters, size_t count);
+xvecStatus xvecSetDistanceQueryFilters(xvecDistanceQuery query, xvecFilter* filters, size_t count);
 
 /**
  * @brief Get the result of distance query.

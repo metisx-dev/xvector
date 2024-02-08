@@ -21,32 +21,17 @@ public:
         return target_.get();
     }
 
-    void setTargetIndices(SharedPtr<CpuDeviceBuffer> targetIndices,
-                          size_t size,
-                          SharedPtr<CpuDeviceBuffer> validityBitmap,
-                          size_t validCount);
+    void setIndices(SharedPtr<CpuDeviceBuffer> indices, size_t size);
 
-    SharedPtr<CpuDeviceBuffer> targetIndices() const noexcept
+    SharedPtr<CpuDeviceBuffer> indices() const noexcept
     {
-        return targetIndices_;
-    }
-
-    SharedPtr<CpuDeviceBuffer> validityBitmap() const noexcept
-    {
-        return validityBitmap_;
+        return indices_;
     }
 
     std::size_t size() const noexcept
     {
         return size_;
     }
-
-    std::size_t validCount() const noexcept
-    {
-        return validCount_;
-    }
-
-    bool valid(std::size_t position) const;
 
     std::uintptr_t customData() const noexcept
     {
@@ -59,16 +44,14 @@ public:
     }
 
 private:
-    CpuIndexArray(CpuVectorArray* target);
+    explicit CpuIndexArray(CpuVectorArray* target);
 
     CpuIndexArray(const CpuIndexArray& src) = delete;
     CpuIndexArray& operator=(const CpuIndexArray& src) = delete;
 
     SharedPtr<CpuVectorArray> target_;
-    SharedPtr<CpuDeviceBuffer> targetIndices_ = nullptr;
-    SharedPtr<CpuDeviceBuffer> validityBitmap_ = nullptr;
+    SharedPtr<CpuDeviceBuffer> indices_ = nullptr;
     std::size_t size_ = 0;
-    std::size_t validCount_;
     std::uintptr_t customData_;
 };
 

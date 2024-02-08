@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-#include "xvector/detail/buffer.hpp"
+#include "xvector/detail/cpu/cpu_filter.hpp"
 #include "xvector/detail/cpu/cpu_knn_result.hpp"
 #include "xvector/detail/cpu/cpu_query.hpp"
 #include "xvector/detail/factory.hpp"
@@ -56,7 +56,7 @@ public:
         return targets_;
     }
 
-    void setFilters(HostBuffer** filters, size_t count) noexcept
+    void setFilters(CpuFilter** filters, size_t count) noexcept
     {
         filters_.clear();
 
@@ -66,7 +66,7 @@ public:
         }
     }
 
-    const std::vector<SharedPtr<HostBuffer>>& filters() const noexcept
+    const std::vector<SharedPtr<CpuFilter>>& filters() const noexcept
     {
         return filters_;
     }
@@ -126,7 +126,7 @@ private:
     std::size_t targetCount_ = 0;
     std::shared_ptr<uint8_t[]> vector_;
     std::shared_ptr<uint8_t[]> targets_;
-    std::vector<SharedPtr<HostBuffer>> filters_;
+    std::vector<SharedPtr<CpuFilter>> filters_;
     SharedPtr<CpuKnnResult> result_;
 };
 

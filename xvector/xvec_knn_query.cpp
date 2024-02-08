@@ -78,7 +78,7 @@ xvecStatus xvecSetKnnQueryTargets(xvecKnnQuery query_, xvecKnnTargetType type, c
     return XVEC_SUCCESS;
 }
 
-xvecStatus xvecSetKnnQueryFilters(xvecKnnQuery query_, xvecBuffer* filters_, size_t count)
+xvecStatus xvecSetKnnQueryFilters(xvecKnnQuery query_, xvecFilter* filters_, size_t count)
 {
     auto query = dynamic_cast<xvec::detail::KnnQuery*>(reinterpret_cast<xvec::detail::CpuQuery*>(query_));
 
@@ -88,7 +88,7 @@ xvecStatus xvecSetKnnQueryFilters(xvecKnnQuery query_, xvecBuffer* filters_, siz
         return XVEC_SUCCESS;
     }
 
-    auto filters = reinterpret_cast<xvec::detail::HostBuffer**>(filters_);
+    auto filters = reinterpret_cast<xvec::detail::Filter**>(filters_);
     query->setFilters(filters, count);
 
     return XVEC_SUCCESS;
