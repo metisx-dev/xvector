@@ -69,7 +69,7 @@ xvecCreateBuffer(&buffer, context, sizeInBytes); // Create a buffer
 ...
 xvecCopyToBuffer(buffer, data, offsetInBytes, sizeInBytes); // Copy data from host to device
 ...
-xvecCopyBufferBuffer(data, buffer offsetInBytes, sizeInBytes); // Copy data from device to host
+xvecCopyFromBuffer(data, buffer offsetInBytes, sizeInBytes); // Copy data from device to host
 ...
 xvecReleaseBuffer(); // Release the buffer
 ```
@@ -240,13 +240,13 @@ xvecGetDistanceResultValues(result, &distance); // Get the distance values
 
 ## Filter
 
-VectorArray의 일부만 계산하고 싶을 경우 IndexArray를 사용해도 되지만 Filter도 사용할 수 있습니다. Filter는 계산에 참여시킬 Vector들을 나타내는 Bitmap입니다. 1로 설정된 경우 계산에 참여합니다.
+VectorArray의 일부만 계산하고 싶을 경우 IndexArray를 사용해도 되지만 Filter도 사용할 수 있습니다. Filter는 계산에 참여시킬 Vector에 대한 Bitmap입니다. 1로 설정된 Vector들만 계산에 참여합니다.
 
-계산해야 할 Vector의 수가 적다면 Index가 효율적일 수 있으며 계산해야 할 Vector가 많다면 Bitmap이 효율적일 수 있습니다
+Pre-filtering과 vector들의 delete/insert를 구현할 때 사용할 수 있습니다. 계산해야 할 Vector의 수가 적다면 Index가, 많다면 Filterr가 효율적일 수 있습니다.
 
-처음 VectorArray에 설정한 Vector 중 일부를 삭제하려고 할 때 특히 유용합니다. Filter가 없다면 Buffer를 새로 만들어서 설정하거나 상당히 엔트리를 가지는 IndexArray를 만들어야 할 것입니다.
+처음 VectorArray에 설정한 Vector 중 일부를 삭제하려고 할 때 특히 유용합니다. Filter가 없다면 매번 Vector Array에 대한 Buffer를 새로 만들어서 설정하거나 상당히 많은 엔트리를 가지는 IndexArray를 만들어야 할 것입니다. Filter를 사용하면 Bitmap을 저장하는 Buffer들을 만들어 유지한 후 이를 업데이트하면 됩니다.
 
-Bitmap을 저장하는 Buffer들을 만들고 KnnQuery 또는 DistanceQuery에 이를 설정하면 됩니다. Query에 설정된 Target Array 수 보다 적게 설정할 경우 남은 Array들은 Filter가 적용되지 않습니다(즉, 모든 Vector들을 계산). 또한 NULL을 주는 경우도 Filter가 적용되지 않습니다.
+Filter를 Query에 설정된 Target Array 수 보다 적게 설정할 경우 남은 Array들은 Filter가 적용되지 않습니다(즉, 모든 Vector들을 계산). 또한 Filter에 NULL을 주는 경우에도 해당 Array의 모든 Vector들을 계산하게 됩니다.
 
 ```c
 ...
