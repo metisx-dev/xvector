@@ -1,7 +1,9 @@
 #pragma once
 
-#include "xvec_buffer.h"
+#include <stddef.h>
+
 #include "xvec_internal.h"
+#include "xvec_status.h"
 
 #ifdef __cplusplus
 extern "C"

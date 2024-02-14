@@ -5,7 +5,6 @@
 
 #include "xvec_buffer.h"
 #include "xvec_status.h"
-#include "xvec_vector_array.h"
 
 #ifdef __cplusplus
 extern "C"

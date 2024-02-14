@@ -4,8 +4,6 @@
 
 #include "xvec_buffer.h"
 #include "xvec_context.h"
-#include "xvec_float_type.h"
-#include "xvec_identifier.h"
 #include "xvec_internal.h"
 
 #ifdef __cplusplus
@@ -29,9 +27,7 @@ typedef struct xvecVectorArrayTag_ *xvecVectorArray;
  *
  * @return xvecStatus
  */
-xvecStatus xvecCreateVectorArray(xvecVectorArray *vectorArray,
-                                 xvecContext context,
-                                 size_t dimension);
+xvecStatus xvecCreateVectorArray(xvecVectorArray *vectorArray, xvecContext context, size_t dimension);
 
 /**
  * @brief Release a vector array.
