@@ -34,12 +34,8 @@ typedef struct xvecDistanceQueryTag_* xvecDistanceQuery;
 /**
  * @brief Create a distance query.
  *
- * @details The query vector is a vector to be compared with vectors in target.
- *          Either `xvecSetDistanceQueryVectors()` or `xvecSetDistanceQueryIndices` must be called
- *          to set calculation target vectors directly or indirectly.
- *          If both are called, the later one is applied.
- *
  * @param [out] query     distance query
+ * @param [in]  context   context
  * @param [in]  type      distance type
  * @param [in]  vector    query vector
  * @param [in]  dimension dimension of the query vector

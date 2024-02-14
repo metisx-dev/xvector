@@ -14,25 +14,27 @@ xvecStatus xvecCreateDistanceQuery(xvecDistanceQuery* query_,
                                    const float* vector_,
                                    size_t dimension)
 {
-    auto context = reinterpret_cast<xvec::sim::Context*>(context_);
-    std::shared_ptr<uint8_t[]> vector(new uint8_t[dimension * sizeof(float)]);
-    std::memcpy(vector.get(), vector_, dimension * sizeof(float));
-    auto query = xvec::sim::DistanceQuery::create(context, type, vector, XVEC_FLOAT32, dimension);
-    if (query == nullptr)
-        return XVEC_ERROR_OUT_OF_MEMORY;
-    query->retain();
-    *query_ = reinterpret_cast<xvecDistanceQuery>(static_cast<xvec::sim::Query*>(query.get()));
-    return XVEC_SUCCESS;
-}
+    try
+    {
+        auto context = reinterpret_cast<xvec::sim::Context*>(context_);
 
-#if 0
-xvecStatus xvecRetainDistanceQuery(xvecDistanceQuery query_)
-{
-    auto query = dynamic_cast<xvec::sim::DistanceQuery*>(reinterpret_cast<xvec::sim::Query>(query_));
-    query->retain();
+        std::shared_ptr<uint8_t[]> vector(new uint8_t[dimension * sizeof(float)]);
+        std::memcpy(vector.get(), vector_, dimension * sizeof(float));
+
+        auto query = new xvec::sim::DistanceQuery(context, type, vector, XVEC_FLOAT32, dimension);
+        *query_ = reinterpret_cast<xvecDistanceQuery>(static_cast<xvec::sim::Query*>(query));
+    }
+    catch (std::bad_alloc& e)
+    {
+        return XVEC_ERROR_OUT_OF_MEMORY;
+    }
+    catch (...)
+    {
+        return XVEC_ERROR_UNKNOWN;
+    }
+
     return XVEC_SUCCESS;
 }
-#endif
 
 xvecStatus xvecReleaseDistanceQuery(xvecDistanceQuery query_)
 {

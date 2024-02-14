@@ -15,17 +15,25 @@ xvecStatus xvecCreateKnnQuery(xvecKnnQuery* query_,
                               size_t dimension,
                               size_t k)
 {
-    auto context = reinterpret_cast<xvec::sim::Context*>(context_);
+    try
+    {
+        auto context = reinterpret_cast<xvec::sim::Context*>(context_);
 
-    auto vector = std::shared_ptr<uint8_t[]>(new uint8_t[dimension * sizeof(float)]);
-    std::memcpy(vector.get(), vector_, dimension * sizeof(float));
+        auto vector = std::shared_ptr<uint8_t[]>(new uint8_t[dimension * sizeof(float)]);
+        std::memcpy(vector.get(), vector_, dimension * sizeof(float));
 
-    auto query = xvec::sim::KnnQuery::create(context, type, vector, XVEC_FLOAT32, dimension, k);
-    if (query == nullptr)
+        auto query = new xvec::sim::KnnQuery(context, type, vector, XVEC_FLOAT32, dimension, k);
+        *query_ = reinterpret_cast<xvecKnnQuery>(static_cast<xvec::sim::Query*>(query));
+    }
+    catch (std::bad_alloc& e)
+    {
         return XVEC_ERROR_OUT_OF_MEMORY;
+    }
+    catch (...)
+    {
+        return XVEC_ERROR_UNKNOWN;
+    }
 
-    query->retain();
-    *query_ = reinterpret_cast<xvecKnnQuery>(static_cast<xvec::sim::Query*>(query.get()));
     return XVEC_SUCCESS;
 }
 

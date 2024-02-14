@@ -236,4 +236,5 @@ public:
 private:
     mutable std::atomic_size_t counter_ = 1;
 };
+
 }  // namespace xvec

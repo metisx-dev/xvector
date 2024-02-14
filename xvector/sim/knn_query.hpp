@@ -2,7 +2,6 @@
 
 #include <cstddef>
 
-#include "factory.hpp"
 #include "filter.hpp"
 #include "knn_result.hpp"
 #include "managed.hpp"
@@ -14,11 +13,16 @@ namespace xvec
 namespace sim
 {
 
-class KnnQuery : public Factory<KnnQuery>, public Managed<KnnQuery>, public Query
+class KnnQuery : public Managed<KnnQuery>, public Query
 {
-    friend Factory<KnnQuery>;
-
 public:
+    KnnQuery(Context* context,
+             xvecKnnType type,
+             const std::shared_ptr<uint8_t[]>& vector,
+             xvecFloatType floatType,
+             std::size_t dimension,
+             std::size_t k);
+
     xvecKnnType type() const noexcept
     {
         return type_;
@@ -92,13 +96,6 @@ public:
     }
 
 private:
-    KnnQuery(Context* context,
-             xvecKnnType type,
-             const std::shared_ptr<uint8_t[]>& vector,
-             xvecFloatType floatType,
-             std::size_t dimension,
-             std::size_t k);
-
     KnnQuery(const KnnQuery& src) = delete;
     KnnQuery& operator=(const KnnQuery& src) = delete;
 

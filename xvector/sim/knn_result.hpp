@@ -3,7 +3,6 @@
 #include <cstddef>
 #include <memory>
 
-#include "factory.hpp"
 #include "managed.hpp"
 #include "xvector/xvec_float_type.h"
 #include "xvector/xvec_index.h"
@@ -13,11 +12,15 @@ namespace xvec
 {
 namespace sim
 {
-class KnnResult : public Factory<KnnResult>, public Managed<KnnResult>
+class KnnResult : public Managed<KnnResult>
 {
-    friend Factory<KnnResult>;
-
 public:
+    KnnResult(Context* context,
+              xvecFloatType floatType,
+              const std::shared_ptr<uint8_t[]>& scores,
+              const std::shared_ptr<xvecIndex[]>& indices,
+              const std::shared_ptr<xvecVectorArray[]>& vectorArrays) noexcept;
+
     xvecFloatType floatType() const noexcept
     {
         return floatType_;
@@ -49,12 +52,6 @@ public:
     }
 
 private:
-    KnnResult(Context* context,
-              xvecFloatType floatType,
-              const std::shared_ptr<uint8_t[]>& scores,
-              const std::shared_ptr<xvecIndex[]>& indices,
-              const std::shared_ptr<xvecVectorArray[]>& vectorArrays) noexcept;
-
     KnnResult(const KnnResult& src) = delete;
     KnnResult& operator=(const KnnResult& src) = delete;
 
@@ -64,10 +61,6 @@ private:
     std::shared_ptr<xvecIndex[]> indices_;
     std::shared_ptr<xvecVectorArray[]> vectorArrays_;
 };
-
-#ifndef XVEC_MU_SUPPORT
-using KnnResult = KnnResult;
-#endif
 
 }  // namespace sim
 }  // namespace xvec

@@ -89,7 +89,7 @@ void createIndexArrayResult(DistanceQuery* query)
     }
 
     std::shared_ptr<uint8_t[]> values(new uint8_t[sizeof(Float) * resultCount]);
-    const auto result = DistanceResult::create(context, values, resultCount);
+    const auto result = makeShared<DistanceResult>(context, values, resultCount);
     query->setResult(result);
 }
 
@@ -118,7 +118,7 @@ void createVectorArrayResult(DistanceQuery* query)
     }
 
     std::shared_ptr<uint8_t[]> values(new uint8_t[sizeof(Float) * resultCount]);
-    const auto result = DistanceResult::create(context, values, resultCount);
+    const auto result = makeShared<DistanceResult>(context, values, resultCount);
     query->setResult(result);
 }
 

@@ -10,44 +10,21 @@ xvecBuffer XVEC_NULL_BUFFER = {0};
 
 xvecStatus xvecCreateBuffer(xvecBuffer *buffer_, xvecContext context_, size_t size)
 {
-    auto context = reinterpret_cast<xvec::sim::Context *>(context_);
-    auto buffer = xvec::sim::DeviceBuffer::create(context, size);
-    if (buffer == nullptr)
+    try
+    {
+        auto context = reinterpret_cast<xvec::sim::Context *>(context_);
+        auto buffer = new xvec::sim::DeviceBuffer(context, size);
+        *buffer_ = reinterpret_cast<xvecBuffer>(buffer);
+    }
+    catch (std::bad_alloc &e)
+    {
         return XVEC_ERROR_OUT_OF_MEMORY;
+    }
+    catch (...)
+    {
+        return XVEC_ERROR_UNKNOWN;
+    }
 
-    buffer->retain();
-    *buffer_ = reinterpret_cast<xvecBuffer>(buffer.get());
-    return XVEC_SUCCESS;
-}
-
-#if 0
-xvecStatus xvecCreateExternalBuffer(xvecBuffer *buffer_,
-                                    xvecContext context_,
-                                    void *pointer,
-                                    size_t size,
-                                    void (*deleter)(void *))
-{
-    auto context = reinterpret_cast<xvec::sim::Context *>(context_);
-
-    std::shared_ptr<uint8_t> base(reinterpret_cast<uint8_t *>(pointer), [deleter](uint8_t *p) {
-        if (deleter != nullptr)
-            deleter(p);
-    });
-
-    auto buffer = xvec::sim::DeviceBuffer::create(context, base, size);
-    if (buffer == nullptr)
-        return XVEC_ERROR_OUT_OF_MEMORY;
-
-    buffer->retain();
-    *buffer_ = reinterpret_cast<xvecBuffer>(buffer.get());
-    return XVEC_SUCCESS;
-}
-#endif
-
-xvecStatus xvecRetainBuffer(xvecBuffer buffer_)
-{
-    auto buffer = reinterpret_cast<xvec::sim::DeviceBuffer *>(buffer_);
-    buffer->retain();
     return XVEC_SUCCESS;
 }
 

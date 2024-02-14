@@ -8,13 +8,21 @@ extern "C"
 {
 xvecStatus xvecCreateIndexArray(xvecIndexArray* indexArray_, xvecVectorArray target_)
 {
-    auto target = reinterpret_cast<xvec::sim::VectorArray*>(target_);
-    auto indexArray = xvec::sim::IndexArray::create(target);
-    if (indexArray == nullptr)
+    try
+    {
+        auto target = reinterpret_cast<xvec::sim::VectorArray*>(target_);
+        auto indexArray = new xvec::sim::IndexArray(target);
+        *indexArray_ = reinterpret_cast<xvecIndexArray>(indexArray);
+    }
+    catch (std::bad_alloc& e)
+    {
         return XVEC_ERROR_OUT_OF_MEMORY;
+    }
+    catch (...)
+    {
+        return XVEC_ERROR_UNKNOWN;
+    }
 
-    indexArray->retain();
-    *indexArray_ = reinterpret_cast<xvecIndexArray>(indexArray.get());
     return XVEC_SUCCESS;
 }
 

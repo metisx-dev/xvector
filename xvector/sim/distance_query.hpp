@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "distance_result.hpp"
-#include "factory.hpp"
 #include "filter.hpp"
 #include "managed.hpp"
 #include "query.hpp"
@@ -16,11 +15,15 @@ namespace sim
 {
 class Context;
 
-class DistanceQuery : public Factory<DistanceQuery>, public Managed<DistanceQuery>, public Query
+class DistanceQuery : public Managed<DistanceQuery>, public Query
 {
-    friend Factory<DistanceQuery>;
-
 public:
+    DistanceQuery(Context* context,
+                  xvecDistanceType type,
+                  const std::shared_ptr<uint8_t[]>& vector,
+                  xvecFloatType floatType,
+                  std::size_t dimension);
+
     xvecDistanceType type() const noexcept
     {
         return type_;
@@ -89,12 +92,6 @@ public:
     }
 
 private:
-    DistanceQuery(Context* context,
-                  xvecDistanceType type,
-                  const std::shared_ptr<uint8_t[]>& vector,
-                  xvecFloatType floatType,
-                  std::size_t dimension);
-
     DistanceQuery(const DistanceQuery& src) = delete;
     DistanceQuery& operator=(const DistanceQuery& src) = delete;
 

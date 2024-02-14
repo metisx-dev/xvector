@@ -2,20 +2,19 @@
 
 #pragma once
 
-#include "factory.hpp"
 #include "device_buffer.hpp"
-#include "vector_array.hpp"
 #include "managed.hpp"
+#include "vector_array.hpp"
 
 namespace xvec
 {
 namespace sim
 {
-class Filter : public Factory<Filter>, public Managed<Filter>
+class Filter : public Managed<Filter>
 {
-    friend Factory<Filter>;
-
 public:
+    explicit Filter(Context* context);
+
     void setBitmap(SharedPtr<DeviceBuffer> bitmap, size_t validCount);
 
     SharedPtr<DeviceBuffer> bitmap() const noexcept
@@ -39,8 +38,6 @@ public:
     }
 
 private:
-    Filter(Context* context);
-
     Filter(const Filter& src) = delete;
     Filter& operator=(const Filter& src) = delete;
 

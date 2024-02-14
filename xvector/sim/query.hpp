@@ -22,7 +22,7 @@ public:
     }
 
 protected:
-    Query(Type queryType) noexcept
+    explicit Query(Type queryType) noexcept
         : queryType_(queryType)
     {
     }

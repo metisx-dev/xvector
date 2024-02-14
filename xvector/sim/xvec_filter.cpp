@@ -7,37 +7,45 @@ extern "C"
 {
 xvecStatus xvecCreateFilter(xvecFilter* filter_, xvecContext context_)
 {
-    auto context = reinterpret_cast<xvec::sim::Context*>(context_);
-    auto Filter = xvec::sim::Filter::create(context);
-    if (Filter == nullptr)
+    try
+    {
+        auto context = reinterpret_cast<xvec::sim::Context*>(context_);
+        auto filter = new xvec::sim::Filter(context);
+        *filter_ = reinterpret_cast<xvecFilter>(filter);
+    }
+    catch (std::bad_alloc& e)
+    {
         return XVEC_ERROR_OUT_OF_MEMORY;
+    }
+    catch (...)
+    {
+        return XVEC_ERROR_UNKNOWN;
+    }
 
-    Filter->retain();
-    *filter_ = reinterpret_cast<xvecFilter>(Filter.get());
     return XVEC_SUCCESS;
 }
 
 xvecStatus xvecReleaseFilter(xvecFilter filter_)
 {
-    auto Filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
-    Filter->release();
+    auto filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
+    filter->release();
     return XVEC_SUCCESS;
 }
 
 xvecStatus xvecSetFilterBitmap(xvecFilter filter_, xvecBuffer bitmap_, size_t validCount)
 {
-    auto Filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
+    auto filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
     auto bitmap = reinterpret_cast<xvec::sim::DeviceBuffer*>(bitmap_);
     // auto validityBitmap = reinterpret_cast<xvec::sim::DeviceBuffer*>(validityBitmap_);
-    Filter->setBitmap(bitmap, validCount);
+    filter->setBitmap(bitmap, validCount);
     return XVEC_SUCCESS;
 }
 
 xvecStatus xvecGetFilterBitmap(xvecFilter filter_, xvecBuffer* bitmap_)
 {
-    auto Filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
+    auto filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
 
-    auto bitmap = Filter->bitmap();
+    auto bitmap = filter->bitmap();
     if (bitmap)
         bitmap->retain();
     *bitmap_ = reinterpret_cast<xvecBuffer>(bitmap.get());
@@ -53,15 +61,15 @@ xvecStatus xvecGetFilterValidCount(xvecFilter filter_, size_t* validCount)
 
 xvecStatus xvecSetFilterCustomData(xvecFilter filter_, uintptr_t customData)
 {
-    auto Filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
-    Filter->setCustomData(customData);
+    auto filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
+    filter->setCustomData(customData);
     return XVEC_SUCCESS;
 }
 
 xvecStatus xvecGetFilterCustomData(xvecFilter filter_, uintptr_t* customData)
 {
-    auto Filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
-    *customData = Filter->customData();
+    auto filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
+    *customData = filter->customData();
     return XVEC_SUCCESS;
 }
 

@@ -7,13 +7,21 @@ extern "C"
 {
 xvecStatus xvecCreateVectorArray(xvecVectorArray* vectorArray_, xvecContext context_, size_t dimension)
 {
-    auto context = reinterpret_cast<xvec::sim::Context*>(context_);
-    auto vectorArray = xvec::sim::VectorArray::create(context, XVEC_FLOAT32, dimension);
-    if (vectorArray == nullptr)
+    try
+    {
+        auto context = reinterpret_cast<xvec::sim::Context*>(context_);
+        auto vectorArray = new xvec::sim::VectorArray(context, XVEC_FLOAT32, dimension);
+        *vectorArray_ = reinterpret_cast<xvecVectorArray>(vectorArray);
+    }
+    catch (std::bad_alloc& e)
+    {
         return XVEC_ERROR_OUT_OF_MEMORY;
+    }
+    catch (...)
+    {
+        return XVEC_ERROR_UNKNOWN;
+    }
 
-    vectorArray->retain();
-    *vectorArray_ = reinterpret_cast<xvecVectorArray>(vectorArray.get());
     return XVEC_SUCCESS;
 }
 

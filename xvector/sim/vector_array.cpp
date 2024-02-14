@@ -16,7 +16,7 @@ namespace
 SharedPtr<DeviceBuffer> createValidityBitmap(Context* context, std::size_t size, std::size_t validCount)
 {
     auto bufferSize = (size + 7) / 8;
-    auto validityBitmap = DeviceBuffer::create(context, bufferSize);
+    auto validityBitmap = makeShared<DeviceBuffer>(context, bufferSize);
 
     std::size_t validBytes = validCount / 8;
     std::memset(validityBitmap->data(), -1, validBytes);
@@ -41,7 +41,7 @@ SharedPtr<DeviceBuffer> expandValidityBitmap(Context* context,
     auto bufferSize = (size + 7) / 8;
     if (bufferSize > oldValidityBitmap->size())
     {
-        auto validityBitmap = DeviceBuffer::create(context, bufferSize);
+        auto validityBitmap = makeShared<DeviceBuffer>(context, bufferSize);
 
         memcpy(validityBitmap->data(), oldValidityBitmap->data(), oldValidityBitmap->size());
         memset(validityBitmap->data() + oldValidityBitmap->size(), 0, bufferSize - oldValidityBitmap->size());
@@ -53,7 +53,7 @@ SharedPtr<DeviceBuffer> expandValidityBitmap(Context* context,
 
 SharedPtr<DeviceBuffer> expandBuffer(Context* context, SharedPtr<DeviceBuffer> oldBuffer, std::size_t newSize)
 {
-    auto newBuffer = DeviceBuffer::create(context, newSize);
+    auto newBuffer = makeShared<DeviceBuffer>(context, newSize);
     memcpy(newBuffer->data(), oldBuffer->data(), oldBuffer->size());
     return newBuffer;
 }
@@ -99,7 +99,7 @@ void VectorArray::setValidityBitmap(SharedPtr<DeviceBuffer> validityBitmap, std:
 SharedPtr<DeviceBuffer> VectorArray::vector(std::size_t index)
 {
     std::size_t floatSize = floatType() == XVEC_FLOAT32 ? sizeof(float) : sizeof(half);
-    auto vector = DeviceBuffer::create(context(), dimension() * floatSize);
+    auto vector = makeShared<DeviceBuffer>(context(), dimension() * floatSize);
 
     uint8_t* dst = vector->data();
     uint8_t* src = vectors_->data() + index * dimension() * floatSize;
@@ -155,7 +155,7 @@ void VectorArray::updateVectors(SharedPtr<DeviceBuffer> positions, SharedPtr<Dev
 SharedPtr<DeviceBuffer> VectorArray::insertVectors(SharedPtr<DeviceBuffer> vectors, std::size_t size)
 {
     std::size_t floatSize = floatType() == XVEC_FLOAT32 ? sizeof(float) : sizeof(half);
-    auto positions = DeviceBuffer::create(context(), dimension() * floatSize);
+    auto positions = makeShared<DeviceBuffer>(context(), dimension() * floatSize);
 
     if (validityBitmap_ == nullptr)
     {

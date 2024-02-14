@@ -3,7 +3,6 @@
 #pragma once
 
 #include "device_buffer.hpp"
-#include "factory.hpp"
 #include "managed.hpp"
 #include "vector_array.hpp"
 
@@ -11,11 +10,11 @@ namespace xvec
 {
 namespace sim
 {
-class IndexArray : public Factory<IndexArray>, public Managed<IndexArray>
+class IndexArray : public Managed<IndexArray>
 {
-    friend Factory<IndexArray>;
-
 public:
+    explicit IndexArray(VectorArray* target);
+
     SharedPtr<VectorArray> target() const noexcept
     {
         return target_.get();
@@ -44,8 +43,6 @@ public:
     }
 
 private:
-    explicit IndexArray(VectorArray* target);
-
     IndexArray(const IndexArray& src) = delete;
     IndexArray& operator=(const IndexArray& src) = delete;
 

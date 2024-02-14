@@ -76,7 +76,7 @@ void createResult(KnnQuery* query)
         auto scores = std::shared_ptr<uint8_t[]>(new uint8_t[sizeof(Float) * (k + 1)]);
         auto indices = std::shared_ptr<xvecIndex[]>(new xvecIndex[k + 1]);
         auto vectorArrays = std::shared_ptr<xvecVectorArray[]>(new xvecVectorArray[k + 1]);
-        auto result = KnnResult::create(context, query->floatType(), scores, indices, vectorArrays);
+        auto result = makeShared<KnnResult>(context, query->floatType(), scores, indices, vectorArrays);
         query->setResult(result);
     }
 }

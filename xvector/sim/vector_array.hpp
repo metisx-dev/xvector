@@ -1,7 +1,6 @@
 #pragma once
 
 #include "device_buffer.hpp"
-#include "factory.hpp"
 #include "managed.hpp"
 #include "xvector/xvec_float_type.h"
 
@@ -11,11 +10,11 @@ namespace sim
 {
 class Context;
 
-class VectorArray : public Factory<VectorArray>, public Managed<VectorArray>
+class VectorArray : public Managed<VectorArray>
 {
-    friend Factory<VectorArray>;
-
 public:
+    VectorArray(Context* context, xvecFloatType floatType, std::size_t dimension);
+
     xvecFloatType floatType() const noexcept
     {
         return floatType_;
@@ -71,8 +70,6 @@ public:
     void deleteVectors(SharedPtr<DeviceBuffer> positions, std::size_t size);
 
 private:
-    VectorArray(Context* context, xvecFloatType floatType, std::size_t dimension);
-
     VectorArray(const VectorArray& src) = delete;
     VectorArray& operator=(const VectorArray& src) = delete;
 
@@ -85,10 +82,6 @@ private:
     void* customData_;
     std::size_t freePosition_;
 };
-
-#ifndef XVEC_MU_SUPPORT
-using VectorArray = VectorArray;
-#endif
 
 }  // namespace sim
 }  // namespace xvec

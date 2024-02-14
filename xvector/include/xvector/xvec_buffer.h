@@ -24,36 +24,13 @@ extern xvecBuffer XVEC_NULL_BUFFER;
 /**
  * @brief Create a buffer.
  *
- * @param [out] buffer buffer
+ * @param [out] buffer  buffer
  * @param [in]  context context
- * @param [in]  data   data. Set NULL to create a buffer with uninitialized data.
- * @param [in]  size   size in bytes
+ * @param [in]  size    size in bytes
  *
  * @return xvecStatus
  */
 xvecStatus xvecCreateBuffer(xvecBuffer* buffer, xvecContext context, size_t size);
-
-#if 0
-/**
- * @brief Create a buffer with an external data.
- *
- * @details The buffer does not take ownership of the data. So the data must be valid until the buffer is destroyed.
- *          If the deleter is not NULL, it is called when the buffer is destroyed.
- *
- * @param [out] buffer  buffer
- * @param [in]  context context
- * @param [in]  data    data
- * @param [in]  size    size in bytes
- * @param [in]  deleter deleter.
- *
- * @return xvecStatus
- */
-xvecStatus xvecCreateExternalBuffer(xvecBuffer* buffer,
-                                    xvecContext context,
-                                    void* data,
-                                    size_t size,
-                                    void (*deleter)(void*));
-#endif
 
 /**
  * @brief Release a buffer.
