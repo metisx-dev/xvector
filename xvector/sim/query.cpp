@@ -1,22 +1,28 @@
+#include "query.hpp"
+
+#include <cassert>
+
 #include "distance_query.hpp"
 #include "knn_query.hpp"
-#include "query.hpp"
 
 namespace xvec
 {
 namespace sim
 {
-void executeQuery(Query** queries, std::size_t count)
+void executeQuery(detail::Object** queries, std::size_t count)
 {
     for (std::size_t i = 0; i < count; ++i)
     {
-        switch (queries[i]->queryType())
+        switch (queries[i]->Object::type())
         {
-        case Query::Knn:
+        case detail::ObjectType::KnnQuery:
             searchKnn(dynamic_cast<KnnQuery*>(queries[i]));
             break;
-        case Query::Distance:
+        case detail::ObjectType::DistanceQuery:
             calculateDistance(dynamic_cast<DistanceQuery*>(queries[i]));
+            break;
+        default:
+            assert(0);
             break;
         }
     }

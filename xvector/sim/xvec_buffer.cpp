@@ -49,21 +49,21 @@ xvecStatus xvecGetBufferContext(xvecBuffer buffer_, xvecContext *context_)
 xvecStatus xvecGetBufferAddress(xvecBuffer buffer_, void **address)
 {
     auto buffer = reinterpret_cast<xvec::sim::DeviceBuffer *>(buffer_);
-    *address = buffer->data();
+    *address = buffer->address();
     return XVEC_SUCCESS;
 }
 
 xvecStatus xvecCopyToBuffer(xvecBuffer dst, const void *src, size_t dstOffset, size_t sizeInBytes)
 {
     auto buffer = reinterpret_cast<xvec::sim::DeviceBuffer *>(dst);
-    std::memcpy(buffer->data() + dstOffset, src, sizeInBytes);
+    std::memcpy(buffer->address() + dstOffset, src, sizeInBytes);
     return XVEC_SUCCESS;
 }
 
 xvecStatus xvecCopyFromBuffer(void *dst, xvecBuffer src, size_t srcOffset, size_t sizeInBytes)
 {
     auto buffer = reinterpret_cast<xvec::sim::DeviceBuffer *>(src);
-    std::memcpy(dst, buffer->data() + srcOffset, sizeInBytes);
+    std::memcpy(dst, buffer->address() + srcOffset, sizeInBytes);
     return XVEC_SUCCESS;
 }
 

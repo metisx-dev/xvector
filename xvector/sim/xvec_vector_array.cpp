@@ -1,6 +1,7 @@
 #include "xvector/xvec_vector_array.h"
 
 #include "context.hpp"
+#include "device_buffer.hpp"
 #include "vector_array.hpp"
 
 extern "C"

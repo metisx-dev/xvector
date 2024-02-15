@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "context.hpp"
-#include "managed.hpp"
+#include "detail/device_buffer_base.hpp"
 
 namespace xvec
 {
@@ -12,7 +12,7 @@ namespace sim
 
 class DeviceBuffer;
 
-class DeviceBuffer : public Managed<DeviceBuffer>
+class DeviceBuffer : public detail::DeviceBufferBase
 {
 public:
     explicit DeviceBuffer(Context* context);
@@ -31,25 +31,15 @@ public:
         return base_;
     }
 
-    uint8_t* data() const noexcept
+    virtual uint8_t* address() const noexcept override
     {
-        return base_.get() + offset_;
-    }
-
-    std::size_t size() const noexcept
-    {
-        return size_;
-    }
-
-    std::size_t offset() const noexcept
-    {
-        return offset_;
+        return base_.get() + offset();
     }
 
     void setData(std::shared_ptr<uint8_t> base, std::size_t offset = 0) noexcept
     {
         base_ = base;
-        offset_ = offset;
+        setOffset(offset);
     }
 
 private:
@@ -57,8 +47,6 @@ private:
     DeviceBuffer& operator=(const DeviceBuffer& src) = delete;
 
     std::shared_ptr<uint8_t> base_;
-    std::size_t size_;
-    std::size_t offset_;
 };
 
 }  // namespace sim

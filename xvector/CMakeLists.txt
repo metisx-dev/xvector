@@ -7,6 +7,16 @@ cmake_minimum_required(VERSION 3.11)
 #add_subdirectory(ut)
 
 set(XVEC_SRCS
+    detail/context_base.cpp
+    detail/device_buffer_base.cpp
+    detail/distance_result_base.cpp
+    detail/distance_query_base.cpp
+    detail/filter_base.cpp
+    detail/index_array_base.cpp
+    detail/knn_query_base.cpp
+    detail/knn_result_base.cpp
+    detail/object.cpp
+    detail/vector_array_base.cpp
     sim/context.cpp
     sim/distance_query.cpp
     sim/distance_result.cpp

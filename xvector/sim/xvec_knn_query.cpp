@@ -1,7 +1,10 @@
 #include "xvector/xvec_knn_query.h"
 
 #include <cstring>
+#include <memory>
 
+#include "context.hpp"
+#include "filter.hpp"
 #include "knn_query.hpp"
 #include "xvector/xvec_index_array.h"
 #include "xvector/xvec_vector_array.h"
@@ -23,7 +26,7 @@ xvecStatus xvecCreateKnnQuery(xvecKnnQuery* query_,
         std::memcpy(vector.get(), vector_, dimension * sizeof(float));
 
         auto query = new xvec::sim::KnnQuery(context, type, vector, XVEC_FLOAT32, dimension, k);
-        *query_ = reinterpret_cast<xvecKnnQuery>(static_cast<xvec::sim::Query*>(query));
+        *query_ = reinterpret_cast<xvecKnnQuery>(static_cast<xvec::detail::Object*>(query));
     }
     catch (std::bad_alloc& e)
     {
@@ -39,14 +42,14 @@ xvecStatus xvecCreateKnnQuery(xvecKnnQuery* query_,
 
 xvecStatus xvecReleaseKnnQuery(xvecKnnQuery query_)
 {
-    auto query = dynamic_cast<xvec::sim::KnnQuery*>(reinterpret_cast<xvec::sim::Query*>(query_));
+    auto query = dynamic_cast<xvec::sim::KnnQuery*>(reinterpret_cast<xvec::detail::Object*>(query_));
     query->release();
     return XVEC_SUCCESS;
 }
 
 xvecStatus xvecGetKnnQueryContext(xvecKnnQuery query_, xvecContext* context_)
 {
-    auto query = dynamic_cast<xvec::sim::KnnQuery*>(reinterpret_cast<xvec::sim::Query*>(query_));
+    auto query = dynamic_cast<xvec::sim::KnnQuery*>(reinterpret_cast<xvec::detail::Object*>(query_));
     auto context = query->context();
     *context_ = reinterpret_cast<xvecContext>(context);
     return XVEC_SUCCESS;
@@ -54,7 +57,7 @@ xvecStatus xvecGetKnnQueryContext(xvecKnnQuery query_, xvecContext* context_)
 
 xvecStatus xvecGetKnnQueryVector(xvecKnnQuery query_, float* vector_)
 {
-    auto query = dynamic_cast<xvec::sim::KnnQuery*>(reinterpret_cast<xvec::sim::Query*>(query_));
+    auto query = dynamic_cast<xvec::sim::KnnQuery*>(reinterpret_cast<xvec::detail::Object*>(query_));
     auto vector = query->vector();
     std::memcpy(vector_, vector.get(), query->dimension() * sizeof(float));
     return XVEC_SUCCESS;
@@ -62,7 +65,7 @@ xvecStatus xvecGetKnnQueryVector(xvecKnnQuery query_, float* vector_)
 
 xvecStatus xvecSetKnnQueryTargets(xvecKnnQuery query_, xvecKnnTargetType type, const void* targets_, size_t count)
 {
-    auto query = dynamic_cast<xvec::sim::KnnQuery*>(reinterpret_cast<xvec::sim::Query*>(query_));
+    auto query = dynamic_cast<xvec::sim::KnnQuery*>(reinterpret_cast<xvec::detail::Object*>(query_));
 
     if (targets_ == NULL || count == 0)
     {
@@ -88,7 +91,7 @@ xvecStatus xvecSetKnnQueryTargets(xvecKnnQuery query_, xvecKnnTargetType type, c
 
 xvecStatus xvecSetKnnQueryFilters(xvecKnnQuery query_, xvecFilter* filters_, size_t count)
 {
-    auto query = dynamic_cast<xvec::sim::KnnQuery*>(reinterpret_cast<xvec::sim::Query*>(query_));
+    auto query = dynamic_cast<xvec::sim::KnnQuery*>(reinterpret_cast<xvec::detail::Object*>(query_));
 
     if (filters_ == NULL || count == 0)
     {
@@ -104,7 +107,7 @@ xvecStatus xvecSetKnnQueryFilters(xvecKnnQuery query_, xvecFilter* filters_, siz
 
 xvecStatus xvecGetKnnQueryResult(xvecKnnQuery query_, xvecKnnResult* result_)
 {
-    auto query = dynamic_cast<xvec::sim::KnnQuery*>(reinterpret_cast<xvec::sim::Query*>(query_));
+    auto query = dynamic_cast<xvec::sim::KnnQuery*>(reinterpret_cast<xvec::detail::Object*>(query_));
     auto result = query->result();
     if (result)
         result->retain();

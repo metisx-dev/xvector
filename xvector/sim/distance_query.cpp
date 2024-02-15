@@ -4,6 +4,7 @@
 //#include <iostream>
 
 //#include "half_float/half_float.hpp"
+#include "distance_result.hpp"
 #include "index_array.hpp"
 #include "vector_array.hpp"
 #include "xvector/xvec_distance_query.h"
@@ -14,22 +15,6 @@ namespace xvec
 {
 namespace sim
 {
-
-DistanceQuery::DistanceQuery(Context* context,
-                             xvecDistanceType type,
-                             const std::shared_ptr<uint8_t[]>& vector,
-                             xvecFloatType floatType,
-                             std::size_t dimension)
-    : Managed<DistanceQuery>(context),
-      Query(Query::Distance),
-      type_(type),
-      floatType_(floatType),
-      dimension_(dimension),
-      vector_(vector),
-      result_()
-{
-}
-
 namespace
 {
 
@@ -151,12 +136,12 @@ void calculateByIndexArray(DistanceQuery* query)
         assert(vectorArray->floatType() == floatType);
 
         const auto indexArraySize = indexArray->size();
-        const xvecIndex* indexArrayData = reinterpret_cast<const xvecIndex*>(indexArray->indices()->data());
-        const Float* vectorArrayData = reinterpret_cast<const Float*>(vectorArray->vectors()->data());
+        const xvecIndex* indexArrayData = reinterpret_cast<const xvecIndex*>(indexArray->indices()->address());
+        const Float* vectorArrayData = reinterpret_cast<const Float*>(vectorArray->vectors()->address());
 
         const uint8_t* filterData = nullptr;
         if (filters.size() > i)
-            filterData = filters[i]->bitmap()->data();
+            filterData = filters[i]->bitmap()->address();
 
         for (auto j = 0u; j < indexArraySize; ++j)
         {
@@ -196,11 +181,11 @@ void calculateByVectorArray(DistanceQuery* query)
         assert(vectorArray->floatType() == floatType);
 
         const auto vectorArraySize = vectorArray->size();
-        const auto vectorArrayData = reinterpret_cast<const Float*>(vectorArray->vectors()->data());
+        const auto vectorArrayData = reinterpret_cast<const Float*>(vectorArray->vectors()->address());
 
         const uint8_t* filterData = nullptr;
         if (filters.size() > i)
-            filterData = filters[i]->bitmap()->data();
+            filterData = filters[i]->bitmap()->address();
 
         for (xvecIndex index = 0u; index < vectorArraySize; ++index)
         {

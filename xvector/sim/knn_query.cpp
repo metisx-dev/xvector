@@ -5,6 +5,7 @@
 
 //#include "half_float/half_float.hpp"
 #include "index_array.hpp"
+#include "knn_result.hpp"
 #include "vector_array.hpp"
 #include "xvector/xvec_index_array.h"
 #include "xvector/xvec_vector_array.h"
@@ -13,22 +14,6 @@ namespace xvec
 {
 namespace sim
 {
-
-KnnQuery::KnnQuery(Context* context,
-                   xvecKnnType type,
-                   const std::shared_ptr<uint8_t[]>& vector,
-                   xvecFloatType floatType,
-                   std::size_t dimension,
-                   std::size_t k)
-    : Managed<KnnQuery>(context),
-      Query(Query::Knn),
-      type_(type),
-      floatType_(floatType),
-      dimension_(dimension),
-      k_(k),
-      vector_(vector)
-{
-}
 
 namespace
 {
@@ -156,12 +141,12 @@ void searchByIndexArray(KnnQuery* query)
         assert(vectorArray->floatType() == floatType);
 
         const auto indexArraySize = indexArray->size();
-        const xvecIndex* indexArrayData = reinterpret_cast<const xvecIndex*>(indexArray->indices()->data());
-        const Float* vectorArrayData = reinterpret_cast<const Float*>(vectorArray->vectors()->data());
+        const xvecIndex* indexArrayData = reinterpret_cast<const xvecIndex*>(indexArray->indices()->address());
+        const Float* vectorArrayData = reinterpret_cast<const Float*>(vectorArray->vectors()->address());
 
         const uint8_t* filterData = nullptr;
         if (filters.size() > i)
-            filterData = filters[i]->bitmap()->data();
+            filterData = filters[i]->bitmap()->address();
 
         for (auto j = 0u; j < indexArraySize; ++j)
         {
@@ -209,11 +194,11 @@ void searchByVectorArray(KnnQuery* query)
         assert(vectorArray->floatType() == floatType);
 
         const auto vectorArraySize = vectorArray->size();
-        const auto vectorArrayData = reinterpret_cast<const Float*>(vectorArray->vectors()->data());
+        const auto vectorArrayData = reinterpret_cast<const Float*>(vectorArray->vectors()->address());
 
         const uint8_t* filterData = nullptr;
         if (filters.size() > i)
-            filterData = filters[i]->bitmap()->data();
+            filterData = filters[i]->bitmap()->address();
 
         for (xvecIndex index = 0u; index < vectorArraySize; ++index)
         {

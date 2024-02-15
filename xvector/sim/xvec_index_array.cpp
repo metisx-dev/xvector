@@ -1,6 +1,6 @@
 #include "xvector/xvec_index_array.h"
 
-#include "context.hpp"
+#include "device_buffer.hpp"
 #include "index_array.hpp"
 #include "vector_array.hpp"
 

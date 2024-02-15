@@ -1,6 +1,7 @@
 #include "xvector/xvec_filter.h"
 
 #include "context.hpp"
+#include "device_buffer.hpp"
 #include "filter.hpp"
 
 extern "C"
@@ -27,17 +28,33 @@ xvecStatus xvecCreateFilter(xvecFilter* filter_, xvecContext context_)
 
 xvecStatus xvecReleaseFilter(xvecFilter filter_)
 {
-    auto filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
-    filter->release();
+    try
+    {
+        auto filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
+        filter->release();
+    }
+    catch (...)
+    {
+        return XVEC_ERROR_UNKNOWN;
+    }
+
     return XVEC_SUCCESS;
 }
 
 xvecStatus xvecSetFilterBitmap(xvecFilter filter_, xvecBuffer bitmap_, size_t validCount)
 {
-    auto filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
-    auto bitmap = reinterpret_cast<xvec::sim::DeviceBuffer*>(bitmap_);
-    // auto validityBitmap = reinterpret_cast<xvec::sim::DeviceBuffer*>(validityBitmap_);
-    filter->setBitmap(bitmap, validCount);
+    try
+    {
+        auto filter = reinterpret_cast<xvec::sim::Filter*>(filter_);
+        auto bitmap = reinterpret_cast<xvec::sim::DeviceBuffer*>(bitmap_);
+        // auto validityBitmap = reinterpret_cast<xvec::sim::DeviceBuffer*>(validityBitmap_);
+        filter->setBitmap(bitmap, validCount);
+    }
+    catch (...)
+    {
+        return XVEC_ERROR_UNKNOWN;
+    }
+
     return XVEC_SUCCESS;
 }
 
