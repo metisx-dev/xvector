@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "detail/filter_base.hpp"
+#include "core/filter_base.hpp"
 
 namespace xvec
 {
 namespace sim
 {
-using Filter = detail::FilterBase;
+using Filter = core::FilterBase;
 
 }  // namespace sim
 }  // namespace xvec

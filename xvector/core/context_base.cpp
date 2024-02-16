@@ -2,7 +2,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 
 std::size_t ContextBase::Register::register_(Object* object)
@@ -110,5 +110,5 @@ ContextBase::~ContextBase() noexcept
     }
 }
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

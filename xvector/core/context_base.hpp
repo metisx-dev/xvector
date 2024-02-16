@@ -9,7 +9,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 template <typename Derived>
 class Managed;
@@ -112,5 +112,5 @@ inline ContextBase::Register& ContextBase::register_<DistanceResult>() noexcept
 }
 #endif
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

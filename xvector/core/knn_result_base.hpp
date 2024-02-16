@@ -10,7 +10,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 class KnnResultBase : public Object
 {
@@ -62,5 +62,5 @@ private:
     std::shared_ptr<xvecVectorArray[]> vectorArrays_;
 };
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

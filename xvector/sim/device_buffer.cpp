@@ -17,12 +17,12 @@ std::shared_ptr<uint8_t> make_shared_array(std::size_t size)
 }  // namespace
 
 DeviceBuffer::DeviceBuffer(Context* context)
-    : detail::DeviceBufferBase(context)
+    : core::DeviceBufferBase(context)
 {
 }
 
 DeviceBuffer::DeviceBuffer(Context* context, std::size_t size, std::size_t offset)
-    : detail::DeviceBufferBase(context, size, offset),
+    : core::DeviceBufferBase(context, size, offset),
       base_(make_shared_array(size))
 {
 }
@@ -31,7 +31,7 @@ DeviceBuffer::DeviceBuffer(Context* context,
                            std::shared_ptr<uint8_t> base,
                            std::size_t size,
                            std::size_t offset) noexcept
-    : detail::DeviceBufferBase(context, size, offset),
+    : core::DeviceBufferBase(context, size, offset),
       base_(base)
 {
 }

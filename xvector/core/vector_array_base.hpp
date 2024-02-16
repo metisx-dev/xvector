@@ -6,7 +6,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 class VectorArrayBase : public Object
 {
@@ -58,5 +58,5 @@ private:
     void* customData_;
 };
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

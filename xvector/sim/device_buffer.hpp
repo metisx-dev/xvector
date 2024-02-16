@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "context.hpp"
-#include "detail/device_buffer_base.hpp"
+#include "core/device_buffer_base.hpp"
 
 namespace xvec
 {
@@ -12,7 +12,7 @@ namespace sim
 
 class DeviceBuffer;
 
-class DeviceBuffer : public detail::DeviceBufferBase
+class DeviceBuffer : public core::DeviceBufferBase
 {
 public:
     explicit DeviceBuffer(Context* context);

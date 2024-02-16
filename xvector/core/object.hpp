@@ -4,7 +4,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 
 class ContextBase;
@@ -55,5 +55,5 @@ private:
     std::size_t id_;
 };
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

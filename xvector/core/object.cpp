@@ -4,7 +4,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 Object::Object(ObjectType type, ContextBase* context)
     : type_(type),
@@ -18,5 +18,5 @@ Object::~Object() noexcept
     context_->unregister(type_, id_);
 }
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

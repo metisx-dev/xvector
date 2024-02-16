@@ -4,7 +4,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 
 DistanceQueryBase::DistanceQueryBase(ContextBase* context,
@@ -21,5 +21,5 @@ DistanceQueryBase::DistanceQueryBase(ContextBase* context,
 {
 }
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

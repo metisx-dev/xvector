@@ -1,13 +1,13 @@
 #pragma once
 
-#include "detail/distance_query_base.hpp"
+#include "core/distance_query_base.hpp"
 
 namespace xvec
 {
 namespace sim
 {
 
-using DistanceQuery = detail::DistanceQueryBase;
+using DistanceQuery = core::DistanceQueryBase;
 
 void calculateDistance(DistanceQuery* query);
 

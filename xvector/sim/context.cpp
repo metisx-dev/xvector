@@ -5,5 +5,5 @@ namespace xvec
 namespace sim
 {
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

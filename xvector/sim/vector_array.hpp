@@ -1,11 +1,11 @@
 #pragma once
 
-#include "detail/vector_array_base.hpp"
+#include "core/vector_array_base.hpp"
 
 namespace xvec
 {
 namespace sim
 {
-using VectorArray = detail::VectorArrayBase;
+using VectorArray = core::VectorArrayBase;
 }  // namespace sim
 }  // namespace xvec

@@ -4,7 +4,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 VectorArrayBase::VectorArrayBase(ContextBase* context, xvecFloatType floatType, std::size_t dimension)
     : Object(ObjectType::VectorArray, context),
@@ -34,5 +34,5 @@ SharedPtr<DeviceBufferBase> VectorArrayBase::vector(std::size_t index)
 }
 #endif
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

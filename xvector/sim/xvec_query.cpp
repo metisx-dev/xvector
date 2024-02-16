@@ -8,7 +8,7 @@ extern "C"
 {
 xvecStatus xvecExecuteQuery(void* queries_, size_t count)
 {
-    auto queries = reinterpret_cast<xvec::detail::Object**>(queries_);
+    auto queries = reinterpret_cast<xvec::core::Object**>(queries_);
     xvec::sim::executeQuery(queries, count);
     return XVEC_SUCCESS;
 }

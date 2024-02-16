@@ -1,13 +1,13 @@
 #pragma once
 
-#include "detail/distance_result_base.hpp"
+#include "core/distance_result_base.hpp"
 
 namespace xvec
 {
 namespace sim
 {
 
-using DistanceResult = xvec::detail::DistanceResultBase;
+using DistanceResult = xvec::core::DistanceResultBase;
 
 }  // namespace sim
 }  // namespace xvec

@@ -5,7 +5,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 
 class DeviceBufferBase;
@@ -45,5 +45,5 @@ private:
     std::size_t offset_;
 };
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.11)
 
 macro(add_xvec_test name src1)
     add_executable(xvec-test-${name} ${src1} ${ARGN})
-    target_link_libraries(xvec-test-${name} xvector)
+    target_link_libraries(xvec-test-${name} xvector-sim)
     add_test(NAME xvec-test-${name} COMMAND valgrind --error-exitcode=1 --leak-check=full ./xvec-test-${name})
 endmacro()
 

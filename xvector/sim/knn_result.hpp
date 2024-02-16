@@ -1,11 +1,11 @@
 #pragma once
 
-#include "detail/knn_result_base.hpp"
+#include "core/knn_result_base.hpp"
 
 namespace xvec
 {
 namespace sim
 {
-using KnnResult = detail::KnnResultBase;
+using KnnResult = core::KnnResultBase;
 }  // namespace sim
 }  // namespace xvec

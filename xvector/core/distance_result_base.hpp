@@ -6,7 +6,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 class DistanceResultBase : public Object
 {
@@ -32,5 +32,5 @@ private:
     std::size_t count_;
 };
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

@@ -2,7 +2,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 IndexArrayBase::IndexArrayBase(VectorArrayBase* target)
     : Object(ObjectType::IndexArray, target->context()),
@@ -16,5 +16,5 @@ void IndexArrayBase::setIndices(SharedPtr<DeviceBufferBase> indices, std::size_t
     size_ = size;
 }
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

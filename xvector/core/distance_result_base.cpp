@@ -2,7 +2,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 DistanceResultBase::DistanceResultBase(ContextBase* context,
                                        const std::shared_ptr<uint8_t[]>& values,
@@ -12,5 +12,5 @@ DistanceResultBase::DistanceResultBase(ContextBase* context,
       count_(count)
 {
 }
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

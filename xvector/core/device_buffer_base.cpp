@@ -6,7 +6,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 DeviceBufferBase::DeviceBufferBase(ContextBase* context)
     : Object(ObjectType::DeviceBuffer, context),

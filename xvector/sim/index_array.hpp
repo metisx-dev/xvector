@@ -1,11 +1,11 @@
 #pragma once
 
-#include "detail/index_array_base.hpp"
+#include "core/index_array_base.hpp"
 
 namespace xvec
 {
 namespace sim
 {
-using IndexArray = detail::IndexArrayBase;
+using IndexArray = core::IndexArrayBase;
 }  // namespace sim
 }  // namespace xvec

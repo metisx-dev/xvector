@@ -8,7 +8,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 class IndexArrayBase : public Object
 {
@@ -52,5 +52,5 @@ private:
     std::uintptr_t customData_;
 };
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

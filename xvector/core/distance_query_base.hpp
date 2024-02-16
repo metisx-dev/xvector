@@ -11,7 +11,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 class DistanceQueryBase : public Object
 {
@@ -104,5 +104,5 @@ private:
     SharedPtr<DistanceResultBase> result_;
 };
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

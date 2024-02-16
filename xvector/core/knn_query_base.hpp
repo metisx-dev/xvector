@@ -9,7 +9,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 
 class KnnQueryBase : public Object

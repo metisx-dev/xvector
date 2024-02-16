@@ -2,7 +2,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 
 KnnQueryBase::KnnQueryBase(ContextBase* context,
@@ -20,5 +20,5 @@ KnnQueryBase::KnnQueryBase(ContextBase* context,
 {
 }
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

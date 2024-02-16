@@ -1,12 +1,12 @@
 #pragma once
 
-#include "detail/knn_query_base.hpp"
+#include "core/knn_query_base.hpp"
 
 namespace xvec
 {
 namespace sim
 {
-using KnnQuery = detail::KnnQueryBase;
+using KnnQuery = core::KnnQueryBase;
 
 void searchKnn(KnnQuery* query);
 

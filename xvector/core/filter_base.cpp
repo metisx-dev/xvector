@@ -2,7 +2,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 FilterBase::FilterBase(ContextBase* context)
     : Object(ObjectType::Filter, context)
@@ -15,5 +15,5 @@ void FilterBase::setBitmap(SharedPtr<DeviceBufferBase> bitmap, size_t validCount
     validCount_ = validCount;
 }
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec

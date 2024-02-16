@@ -24,7 +24,7 @@ xvecStatus xvecCreateDistanceQuery(xvecDistanceQuery* query_,
         std::memcpy(vector.get(), vector_, dimension * sizeof(float));
 
         auto query = new xvec::sim::DistanceQuery(context, type, vector, XVEC_FLOAT32, dimension);
-        *query_ = reinterpret_cast<xvecDistanceQuery>(static_cast<xvec::detail::Object*>(query));
+        *query_ = reinterpret_cast<xvecDistanceQuery>(static_cast<xvec::core::Object*>(query));
     }
     catch (std::bad_alloc& e)
     {
@@ -40,14 +40,14 @@ xvecStatus xvecCreateDistanceQuery(xvecDistanceQuery* query_,
 
 xvecStatus xvecReleaseDistanceQuery(xvecDistanceQuery query_)
 {
-    auto query = dynamic_cast<xvec::sim::DistanceQuery*>(reinterpret_cast<xvec::detail::Object*>(query_));
+    auto query = dynamic_cast<xvec::sim::DistanceQuery*>(reinterpret_cast<xvec::core::Object*>(query_));
     query->release();
     return XVEC_SUCCESS;
 }
 
 xvecStatus xvecGetDistanceQueryVector(xvecDistanceQuery query_, float* vector_)
 {
-    auto query = dynamic_cast<xvec::sim::DistanceQuery*>(reinterpret_cast<xvec::detail::Object*>(query_));
+    auto query = dynamic_cast<xvec::sim::DistanceQuery*>(reinterpret_cast<xvec::core::Object*>(query_));
     auto vector = query->vector();
     std::memcpy(vector_, vector.get(), query->dimension() * sizeof(float));
     return XVEC_SUCCESS;
@@ -58,7 +58,7 @@ xvecStatus xvecSetDistanceQueryTargets(xvecDistanceQuery query_,
                                        const void* targets_,
                                        size_t count)
 {
-    auto query = dynamic_cast<xvec::sim::DistanceQuery*>(reinterpret_cast<xvec::detail::Object*>(query_));
+    auto query = dynamic_cast<xvec::sim::DistanceQuery*>(reinterpret_cast<xvec::core::Object*>(query_));
 
     if (targets_ == NULL || count == 0)
     {
@@ -84,7 +84,7 @@ xvecStatus xvecSetDistanceQueryTargets(xvecDistanceQuery query_,
 
 xvecStatus xvecSetDistanceQueryFilters(xvecDistanceQuery query_, xvecFilter* filters_, size_t count)
 {
-    auto query = dynamic_cast<xvec::sim::DistanceQuery*>(reinterpret_cast<xvec::detail::Object*>(query_));
+    auto query = dynamic_cast<xvec::sim::DistanceQuery*>(reinterpret_cast<xvec::core::Object*>(query_));
 
     if (filters_ == NULL || count == 0)
     {
@@ -100,7 +100,7 @@ xvecStatus xvecSetDistanceQueryFilters(xvecDistanceQuery query_, xvecFilter* fil
 
 xvecStatus xvecGetDistanceQueryResult(xvecDistanceQuery query_, xvecDistanceResult* result_)
 {
-    auto query = dynamic_cast<xvec::sim::DistanceQuery*>(reinterpret_cast<xvec::detail::Object*>(query_));
+    auto query = dynamic_cast<xvec::sim::DistanceQuery*>(reinterpret_cast<xvec::core::Object*>(query_));
     auto result = query->result();
     result->retain();
     *result_ = reinterpret_cast<xvecDistanceResult>(result.get());

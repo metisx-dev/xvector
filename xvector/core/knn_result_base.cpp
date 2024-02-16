@@ -3,7 +3,7 @@
 
 namespace xvec
 {
-namespace detail
+namespace core
 {
 KnnResultBase::KnnResultBase(ContextBase* context,
                              xvecFloatType floatType,
@@ -19,5 +19,5 @@ KnnResultBase::KnnResultBase(ContextBase* context,
 {
 }
 
-}  // namespace detail
+}  // namespace core
 }  // namespace xvec
