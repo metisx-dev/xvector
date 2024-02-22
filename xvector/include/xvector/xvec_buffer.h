@@ -64,17 +64,17 @@ xvecStatus xvecGetBufferContext(xvecBuffer buffer, xvecContext* context);
 xvecStatus xvecGetBufferAddress(xvecBuffer buffer, void** address);
 
 /**
- * @brief Copy data to the buffer.
+ * @brief Copy data from host to the device.
  *
  * @param [in] dst       destination buffer
  * @param [in] src       source data
  * @param [in] dstOffset offset in bytes
  * @param [in] size      size in bytes
  */
-xvecStatus xvecCopyToBuffer(xvecBuffer dst, const void* src, size_t dstOffset, size_t sizeInBytes);
+xvecStatus xvecCopyHostToBuffer(xvecBuffer dst, const void* src, size_t dstOffset, size_t size);
 
 /**
- * @brief Copy data from the buffer.
+ * @brief Copy data from the buffer to host.
  *
  * @param [in]  dst       destination data
  * @param [in]  src       source buffer
@@ -83,7 +83,24 @@ xvecStatus xvecCopyToBuffer(xvecBuffer dst, const void* src, size_t dstOffset, s
  *
  * @return xvecStatus
  */
-xvecStatus xvecCopyFromBuffer(void* dst, xvecBuffer src, size_t srcOffset, size_t sizeInBytes);
+xvecStatus xvecCopyBufferToHost(void* dst, xvecBuffer src, size_t srcOffset, size_t size);
+
+/**
+ * @brief Copy data from the buffer to buffer.
+ *
+ * @param [in]  dst       destination data
+ * @param [in]  dstOffset offset in bytes
+ * @param [in]  src       source buffer
+ * @param [in]  srcOffset offset in bytes
+ * @param [in]  size      size in bytes
+ *
+ * @return xvecStatus
+ */
+xvecStatus xvecCopyBufferToBuffer(xvecBuffer dst,
+                                  size_t dstOffset,
+                                  xvecBuffer src,
+                                  size_t srcOffset,
+                                  size_t size);
 
 /**
  * @brief Get the size of the buffer.
@@ -93,7 +110,7 @@ xvecStatus xvecCopyFromBuffer(void* dst, xvecBuffer src, size_t srcOffset, size_
  *
  * @return xvecStatus
  */
-xvecStatus xvecGetBufferSize(xvecBuffer buffer, size_t* size);
+xvecStatus xvecGetBufferCapacity(xvecBuffer buffer, size_t* size);
 
 #ifdef __cplusplus
 }  // extern "C"

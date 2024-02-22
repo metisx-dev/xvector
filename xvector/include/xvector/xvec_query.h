@@ -20,7 +20,7 @@ extern "C"
  *
  * @return xvecStatus
  */
-xvecStatus xvecExecuteQuery(void* queries, size_t count);
+xvecStatus xvecExecuteQueries(void* queries, size_t count);
 
 #ifdef __cplusplus
 }

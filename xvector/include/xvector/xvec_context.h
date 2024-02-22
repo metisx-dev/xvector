@@ -20,7 +20,7 @@ typedef struct xvecContextTag_* xvecContext;
  *
  * @return xvecStatus
  */
-xvecStatus xvecCreateContext(xvecContext* context);
+xvecStatus xvecCreateContext(xvecContext* context, void* device);
 
 /**
  * @brief Release a context.

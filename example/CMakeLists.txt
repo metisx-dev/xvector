@@ -1,25 +1,32 @@
 cmake_minimum_required(VERSION 3.11)
 
-#set(XVEC_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/inc)
-#set(ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+macro(add_xvec_example name lib src1)
+  add_executable(${name} ${src1} ${ARGN})
 
-#add_subdirectory(src)
-#add_subdirectory(ut)
+  target_link_libraries(${name} ${lib})
 
-#if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-#    target_compile_options(xvec-example PRIVATE -Wall -Wextra -Wpedantic -Werror -Wundef)
-#endif()
+  set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
-macro(add_xvec_example name src1)
-    add_executable(${name} ${src1} ${ARGN})
-    target_link_libraries(${name} xvector-sim)
-    add_test(NAME ${name} COMMAND valgrind -s --error-exitcode=1 --leak-check=full ./${name})
+  #get_target_property(OUTPUT_DIRECTORY ${name} RUNTIME_OUTPUT_DIRECTORY)
+  #message(STATUS "---o> OUTPUT_DIRECTORY: ${OUTPUT_DIRECTORY}")
+
+  message(STATUS "-------------------> CMAKE_RUNTIME_OUTPUT_DIRECTORY: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
+  add_custom_command(
+    TARGET ${name} POST_BUILD
+
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/resources
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${XVECTOR_HOME_DIRECTORY} ${CMAKE_CURRENT_BINARY_DIR}/xvector
+    COMMENT "Creating symlink to source directory in the binary directory"
+  )
+
+  add_test(NAME ${name}
+    #COMMAND valgrind -s --error-exitcode=1 --leak-check=full ./${name}-${target}
+    COMMAND ./${name}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
 endmacro()
 
-add_xvec_example(example example.c helper.cpp)
-
-add_custom_command(
-    TARGET example POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/resources
-    COMMENT "Creating symlink to source directory in the binary directory"
-)
+add_xvec_example(example-sim xvector-sim example.c helper.cpp)
+add_xvec_example(example xvector example.c helper.cpp)

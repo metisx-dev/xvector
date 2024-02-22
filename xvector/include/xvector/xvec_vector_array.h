@@ -59,11 +59,11 @@ xvecStatus xvecGetVectorArrayDimension(xvecVectorArray vectorArray, size_t *dime
  *
  * @param [in] vectorArray vector array
  * @param [in] vectors     a buffer containing vectors
- * @param [in] size        the number of vectors
+ * @param [in] length      the number of vectors
  *
  * @return xvecStatus
  */
-xvecStatus xvecSetVectorArrayVectors(xvecVectorArray vectorArray, xvecBuffer vectors, size_t size);
+xvecStatus xvecSetVectorArrayBuffer(xvecVectorArray vectorArray, xvecBuffer vectors, size_t length);
 
 /**
  * @brief Get the buffer containing vectors of a vector array.
@@ -76,7 +76,7 @@ xvecStatus xvecSetVectorArrayVectors(xvecVectorArray vectorArray, xvecBuffer vec
  *
  * @return xvecStatus
  */
-xvecStatus xvecGetVectorArrayVectors(xvecVectorArray vectorArray, xvecBuffer *vectors);
+xvecStatus xvecGetVectorArrayBuffer(xvecVectorArray vectorArray, xvecBuffer *vectors);
 
 /**
  * @brief Get the number of vectors in a vector array.
@@ -88,7 +88,7 @@ xvecStatus xvecGetVectorArrayVectors(xvecVectorArray vectorArray, xvecBuffer *ve
  *
  * @return xvecStatus
  */
-xvecStatus xvecGetVectorArraySize(xvecVectorArray vectorArray, size_t *size);
+xvecStatus xvecGetVectorArrayLength(xvecVectorArray vectorArray, size_t *size);
 
 /**
  * @brief Set the custom data to a vector array.

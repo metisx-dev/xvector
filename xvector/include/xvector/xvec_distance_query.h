@@ -5,26 +5,14 @@
 #include "xvec_distance_result.h"
 #include "xvec_filter.h"
 #include "xvec_internal.h"
+#include "xvec_op_type.h"
 #include "xvec_query.h"  // IWYU pragma: export
+#include "xvec_target_type.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-typedef enum xvecDistanceType
-{
-    XVEC_DISTANCE_L2_DISTANCE,
-    XVEC_DISTANCE_DOT_PRODUCT,
-    XVEC_DISTANCE_COSINE_SIMILARITY,
-} xvecDistanceType;
-
-typedef enum xvecDistanceTargetType
-{
-    XVEC_DISTANCE_TARGET_VECTOR_ARRAY,
-    XVEC_DISTANCE_TARGET_INDEX_ARRAY,
-    XVEC_DISTANCE_TARGET_VECTOR,  // TODO: Implement this
-} xvecDistanceTargetType;
 
 /**
  * @brief Distance query.
@@ -36,7 +24,7 @@ typedef struct xvecDistanceQueryTag_* xvecDistanceQuery;
  *
  * @param [out] query     distance query
  * @param [in]  context   context
- * @param [in]  type      distance type
+ * @param [in]  opTyp     operation type
  * @param [in]  vector    query vector
  * @param [in]  dimension dimension of the query vector
  *
@@ -44,7 +32,7 @@ typedef struct xvecDistanceQueryTag_* xvecDistanceQuery;
  */
 xvecStatus xvecCreateDistanceQuery(xvecDistanceQuery* query,
                                    xvecContext context,
-                                   xvecDistanceType type,
+                                   xvecOpType opType,
                                    const float* vector,
                                    size_t dimension);
 
@@ -81,7 +69,7 @@ xvecStatus xvecGetDistanceQueryVector(xvecDistanceQuery query, float* vector);
  * @return xvecStatus
  */
 xvecStatus xvecSetDistanceQueryTargets(xvecDistanceQuery query_,
-                                       xvecDistanceTargetType type,
+                                       xvecTargetType type,
                                        const void* targets_,
                                        size_t count);
 
@@ -108,11 +96,12 @@ xvecStatus xvecSetDistanceQueryFilters(xvecDistanceQuery query, xvecFilter* filt
  *          otherwise it will cause a memory leak.
  *
  * @param [in]  query  distance query
+ * @param [in]  index  index of the target
  * @param [out] result distance result
  *
  * @return xvecStatus
  */
-xvecStatus xvecGetDistanceQueryResult(xvecDistanceQuery query, xvecDistanceResult* result);
+xvecStatus xvecGetDistanceQueryResult(xvecDistanceQuery query, size_t index, xvecDistanceResult* result);
 
 #ifdef __cplusplus
 }

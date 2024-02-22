@@ -64,11 +64,11 @@ xvecStatus xvecGetIndexArrayTarget(xvecIndexArray indexArray, xvecVectorArray* t
  *
  * @param [in] indexArray index array
  * @param [in] indices    a buffer of indices
- * @param [in] size       the number of indices
+ * @param [in] length     the number of indices
  *
  * @return xvecStatus
  */
-xvecStatus xvecSetIndexArrayIndices(xvecIndexArray indexArray, xvecBuffer targetIndices, size_t size);
+xvecStatus xvecSetIndexArrayBuffer(xvecIndexArray indexArray, xvecBuffer targetIndices, size_t length);
 
 /**
  * @brief Get the indices of the index array.
@@ -81,17 +81,17 @@ xvecStatus xvecSetIndexArrayIndices(xvecIndexArray indexArray, xvecBuffer target
  *
  * @return xvecStatus
  */
-xvecStatus xvecGetIndexArrayIndices(xvecIndexArray indexArray, xvecBuffer* targetIndices);
+xvecStatus xvecGetIndexArrayData(xvecIndexArray indexArray, xvecBuffer* targetIndices);
 
 /**
  * @brief Get the number of indices of the index array.
  *
- * @param [in]  indexArray index array
- * @param [out] size       the number of indices
+ * @param [in]  indexArray the index array
+ * @param [out] length     the number of indices
  *
  * @return xvecStatus
  */
-xvecStatus xvecGetIndexArraySize(xvecIndexArray indexArray, size_t* size);
+xvecStatus xvecGetIndexArrayLength(xvecIndexArray indexArray, size_t* length);
 
 /**
  * @brief Set the custom data to a index array.
@@ -101,7 +101,7 @@ xvecStatus xvecGetIndexArraySize(xvecIndexArray indexArray, size_t* size);
  *
  * @return xvecStatus
  */
-xvecStatus xvecSetIndexArrayCustomData(xvecIndexArray indexArray_, uintptr_t customData);
+xvecStatus xvecSetIndexArrayCustomData(xvecIndexArray indexArray_, void* customData);
 
 /**
  * @brief Get the custom data of a index array.
@@ -111,22 +111,7 @@ xvecStatus xvecSetIndexArrayCustomData(xvecIndexArray indexArray_, uintptr_t cus
  *
  * @return xvecStatus
  */
-xvecStatus xvecGetIndexArrayCustomData(xvecIndexArray indexArray_, uintptr_t *customData);
-
-#if 0
-/**
- * @brief Get the validity bitmap of the index array.
- *
- * @details The returned buffer must be released by `xvecReleaseBuffer()`, when it is no longer needed,
- *         otherwise it will cause a memory leak.
- *
- * @param [in]  indexArray    index array
- * @param [out] validityBitmap a buffer of validity bitmap
- *
- * @return xvecStatus
- */
-xvecStatus xvecGetIndexArrayValidityBitmap(xvecIndexArray indexArray, xvecBuffer* validityBitmap);
-#endif
+xvecStatus xvecGetIndexArrayCustomData(xvecIndexArray indexArray_, void** customData);
 
 #ifdef __cplusplus
 }

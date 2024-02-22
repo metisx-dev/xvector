@@ -23,7 +23,7 @@ int main()
     const size_t vectorCount = 100;
     xvecContext context;
 
-    EXIT_ON_ERROR(xvecCreateContext(&context));
+    EXIT_ON_ERROR(xvecCreateContext(&context, NULL));
 
     // VectorArray Example
 
@@ -41,55 +41,64 @@ int main()
     xvecBuffer vectorBuf;
     EXIT_ON_ERROR(xvecCreateBuffer(&vectorBuf, context, vectorCount * dimension * sizeof(float)));
 
-    EXIT_ON_ERROR(xvecCopyToBuffer(vectorBuf, vectors, 0, vectorCount * dimension * sizeof(float)));
+    EXIT_ON_ERROR(xvecCopyHostToBuffer(vectorBuf, vectors, 0, vectorCount * dimension * sizeof(float)));
 
-    EXIT_ON_ERROR(xvecSetVectorArrayVectors(vectorArray, vectorBuf, vectorCount));
+    EXIT_ON_ERROR(xvecSetVectorArrayBuffer(vectorArray, vectorBuf, vectorCount));
 
     xvecReleaseBuffer(vectorBuf);
 
+#if 1
     {
         printf("Basic Distance Calculation with Vector Array\n");
 
+        const size_t targetCount = 1;
+
         xvecDistanceQuery query;
-        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_DISTANCE_DOT_PRODUCT, queryVector, dimension));
+        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension));
 
-        EXIT_ON_ERROR(xvecSetDistanceQueryTargets(query, XVEC_DISTANCE_TARGET_VECTOR_ARRAY, &vectorArray, 1));
+        EXIT_ON_ERROR(xvecSetDistanceQueryTargets(query, XVEC_TARGET_VECTOR_ARRAY, &vectorArray, targetCount));
 
-        EXIT_ON_ERROR(xvecExecuteQuery(&query, 1));
+        EXIT_ON_ERROR(xvecExecuteQueries(&query, 1));
 
-        xvecDistanceResult result;
-        EXIT_ON_ERROR(xvecGetDistanceQueryResult(query, &result));
+        for (size_t i = 0; i < targetCount; i++)
+        {
+            xvecDistanceResult result;
+            EXIT_ON_ERROR(xvecGetDistanceQueryResult(query, i, &result));
+
+            float* distances;
+            EXIT_ON_ERROR(xvecGetDistanceResultValues(result, &distances));
+
+            size_t length;
+            EXIT_ON_ERROR(xvecGetDistanceResultLength(result, &length));
+
+            const char* customData;
+            EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArray, (void**)&customData));
+
+            for (size_t j = 0; j < length; j++)
+            {
+                printf("[%zu] %s, %f\n", j, customData, distances[j]);
+            }
+
+            printf("\n");
+            xvecReleaseDistanceResult(result);
+        }
 
         xvecReleaseDistanceQuery(query);
-
-        float* distances;
-        EXIT_ON_ERROR(xvecGetDistanceResultValues(result, &distances));
-
-        size_t size;
-        EXIT_ON_ERROR(xvecGetDistanceResultSize(result, &size));
-
-        const char* customData;
-        EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArray, (void**)&customData));
-
-        for (size_t i = 0; i < size; i++)
-        {
-            printf("[%zu] %s, %f\n", i, customData, distances[i]);
-        }
-        printf("\n");
-
-        xvecReleaseDistanceResult(result);
     }
+#endif  // XVECTOR_SIM
 
     {
         printf("Basic k-NN Search with Vector Array\n");
 
+        const size_t targetCount = 1;
         const size_t k = 10;
+
         xvecKnnQuery query;
-        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_KNN_DOT_PRODUCT, queryVector, dimension, k));
+        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension, k));
 
-        EXIT_ON_ERROR(xvecSetKnnQueryTargets(query, XVEC_KNN_TARGET_VECTOR_ARRAY, &vectorArray, 1));
+        EXIT_ON_ERROR(xvecSetKnnQueryTargets(query, XVEC_TARGET_VECTOR_ARRAY, &vectorArray, 1));
 
-        EXIT_ON_ERROR(xvecExecuteQuery(&query, 1));
+        EXIT_ON_ERROR(xvecExecuteQueries(&query, 1));
 
         xvecKnnResult result;
         EXIT_ON_ERROR(xvecGetKnnQueryResult(query, &result));
@@ -117,14 +126,15 @@ int main()
         xvecReleaseKnnResult(result);
     }
 
+#if 1
     {
         printf("Basic Distance Calculation with Vector Array and Filter\n");
 
-        const size_t k = 10;
+        const size_t targetCount = 1;
         xvecDistanceQuery query;
-        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_DISTANCE_DOT_PRODUCT, queryVector, dimension));
+        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension));
 
-        EXIT_ON_ERROR(xvecSetDistanceQueryTargets(query, XVEC_DISTANCE_TARGET_VECTOR_ARRAY, &vectorArray, 1));
+        EXIT_ON_ERROR(xvecSetDistanceQueryTargets(query, XVEC_TARGET_VECTOR_ARRAY, &vectorArray, 1));
 
         size_t filterSize = (vectorCount + 7) / 8;
 
@@ -142,12 +152,12 @@ int main()
             ++validCount;
         }
 
-        EXIT_ON_ERROR(xvecCopyToBuffer(bitmapBuf, bitmap, 0, filterSize));
+        EXIT_ON_ERROR(xvecCopyHostToBuffer(bitmapBuf, bitmap, 0, filterSize));
 
         xvecFilter filter;
         EXIT_ON_ERROR(xvecCreateFilter(&filter, context));
 
-        EXIT_ON_ERROR(xvecSetFilterBitmap(filter, bitmapBuf, validCount));
+        EXIT_ON_ERROR(xvecSetFilterBuffer(filter, bitmapBuf, validCount));
 
         xvecReleaseBuffer(bitmapBuf);
 
@@ -155,39 +165,43 @@ int main()
 
         xvecReleaseFilter(filter);
 
-        EXIT_ON_ERROR(xvecExecuteQuery(&query, 1));
+        EXIT_ON_ERROR(xvecExecuteQueries(&query, 1));
 
-        xvecDistanceResult result;
-        EXIT_ON_ERROR(xvecGetDistanceQueryResult(query, &result));
+        for (size_t i = 0; i < targetCount; i++)
+        {
+            xvecDistanceResult result;
+            EXIT_ON_ERROR(xvecGetDistanceQueryResult(query, i, &result));
+
+            float* distances;
+            EXIT_ON_ERROR(xvecGetDistanceResultValues(result, &distances));
+
+            size_t length;
+            EXIT_ON_ERROR(xvecGetDistanceResultLength(result, &length));
+
+            const char* customData;
+            EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArray, (void**)&customData));
+
+            for (size_t j = 0; j < length; j++)
+            {
+                printf("[%zu] %s, %f\n", j, customData, distances[j]);
+            }
+
+            printf("\n");
+            xvecReleaseDistanceResult(result);
+        }
 
         xvecReleaseDistanceQuery(query);
-
-        float* distances;
-        EXIT_ON_ERROR(xvecGetDistanceResultValues(result, &distances));
-
-        size_t size;
-        EXIT_ON_ERROR(xvecGetDistanceResultSize(result, &size));
-
-        const char* customData;
-        EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArray, (void**)&customData));
-
-        for (size_t i = 0; i < size; i++)
-        {
-            printf("[%zu] %s, %f\n", i, customData, distances[i]);
-        }
-        printf("\n");
-
-        xvecReleaseDistanceResult(result);
     }
+#endif
 
     {
         printf("Basic k-NN Search with Vector Array and Filter\n");
 
         const size_t k = 10;
         xvecKnnQuery query;
-        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_KNN_DOT_PRODUCT, queryVector, dimension, k));
+        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension, k));
 
-        EXIT_ON_ERROR(xvecSetKnnQueryTargets(query, XVEC_KNN_TARGET_VECTOR_ARRAY, &vectorArray, 1));
+        EXIT_ON_ERROR(xvecSetKnnQueryTargets(query, XVEC_TARGET_VECTOR_ARRAY, &vectorArray, 1));
 
         size_t filterSize = (vectorCount + 7) / 8;
 
@@ -205,12 +219,12 @@ int main()
             ++validCount;
         }
 
-        EXIT_ON_ERROR(xvecCopyToBuffer(bitmapBuf, bitmap, 0, filterSize));
+        EXIT_ON_ERROR(xvecCopyHostToBuffer(bitmapBuf, bitmap, 0, filterSize));
 
         xvecFilter filter;
         EXIT_ON_ERROR(xvecCreateFilter(&filter, context));
 
-        EXIT_ON_ERROR(xvecSetFilterBitmap(filter, bitmapBuf, validCount));
+        EXIT_ON_ERROR(xvecSetFilterBuffer(filter, bitmapBuf, validCount));
 
         xvecReleaseBuffer(bitmapBuf);
 
@@ -218,7 +232,7 @@ int main()
 
         xvecReleaseFilter(filter);
 
-        EXIT_ON_ERROR(xvecExecuteQuery(&query, 1));
+        EXIT_ON_ERROR(xvecExecuteQueries(&query, 1));
 
         xvecKnnResult result;
         EXIT_ON_ERROR(xvecGetKnnQueryResult(query, &result));
@@ -263,60 +277,67 @@ int main()
             indices[j] = j * 4 + i;
         }
 
-        EXIT_ON_ERROR(xvecCopyToBuffer(indexBuf, indices, 0, sizeof(indices)));
+        EXIT_ON_ERROR(xvecCopyHostToBuffer(indexBuf, indices, 0, sizeof(indices)));
 
-        EXIT_ON_ERROR(xvecSetIndexArrayIndices(indexArrays[i], indexBuf, sizeof(indices) / sizeof(xvecIndex)));
+        EXIT_ON_ERROR(xvecSetIndexArrayBuffer(indexArrays[i], indexBuf, sizeof(indices) / sizeof(xvecIndex)));
 
         xvecReleaseBuffer(indexBuf);
     }
 
+#if 1
     {
         printf("Basic Distance Calculation with Index Array\n");
 
         xvecDistanceQuery query;
-        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_DISTANCE_DOT_PRODUCT, queryVector, dimension));
+        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension));
 
         xvecIndexArray targets[] = {indexArrays[1], indexArrays[3]};
-        EXIT_ON_ERROR(xvecSetDistanceQueryTargets(
-            query, XVEC_DISTANCE_TARGET_INDEX_ARRAY, targets, sizeof(targets) / sizeof(targets[0])));
+        const size_t targetCount = sizeof(targets) / sizeof(targets[0]);
+        EXIT_ON_ERROR(xvecSetDistanceQueryTargets(query, XVEC_TARGET_INDEX_ARRAY, targets, targetCount));
 
-        EXIT_ON_ERROR(xvecExecuteQuery(&query, 1));
+        EXIT_ON_ERROR(xvecExecuteQueries(&query, 1));
 
-        xvecDistanceResult result;
-        EXIT_ON_ERROR(xvecGetDistanceQueryResult(query, &result));
+        for (size_t i = 0; i < targetCount; i++)
+        {
+            xvecDistanceResult result;
+            EXIT_ON_ERROR(xvecGetDistanceQueryResult(query, i, &result));
+
+            float* distances;
+            EXIT_ON_ERROR(xvecGetDistanceResultValues(result, &distances));
+
+            size_t length;
+            EXIT_ON_ERROR(xvecGetDistanceResultLength(result, &length));
+
+            const char* customData;
+            EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArray, (void**)&customData));
+
+            for (size_t j = 0; j < length; j++)
+            {
+                printf("[%zu] %s, %f\n", j, customData, distances[j]);
+            }
+
+            printf("\n");
+            xvecReleaseDistanceResult(result);
+        }
 
         xvecReleaseDistanceQuery(query);
-
-        float* distances;
-        EXIT_ON_ERROR(xvecGetDistanceResultValues(result, &distances));
-
-        size_t size;
-        EXIT_ON_ERROR(xvecGetDistanceResultSize(result, &size));
-
-        const char* customData;
-        EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArray, (void**)&customData));
-
-        for (size_t i = 0; i < size; i++)
-        {
-            printf("[%zu] %s, %f\n", i, customData, distances[i]);
-        }
-        printf("\n");
-
-        xvecReleaseDistanceResult(result);
     }
+#endif  // XVECTOR_SIM
 
     {
         printf("Basic k-NN Search with Index Array\n");
 
         const size_t k = 10;
+
+#if 0
         xvecKnnQuery query;
-        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_KNN_DOT_PRODUCT, queryVector, dimension, k));
+        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension, k));
 
         xvecIndexArray targets[] = {indexArrays[1], indexArrays[3]};
         EXIT_ON_ERROR(
-            xvecSetKnnQueryTargets(query, XVEC_KNN_TARGET_INDEX_ARRAY, targets, sizeof(targets) / sizeof(targets[0])));
+            xvecSetKnnQueryTargets(query, XVEC_TARGET_INDEX_ARRAY, targets, sizeof(targets) / sizeof(targets[0])));
 
-        EXIT_ON_ERROR(xvecExecuteQuery(&query, 1));
+        EXIT_ON_ERROR(xvecExecuteQueries(&query, 1));
 
         xvecKnnResult result;
         EXIT_ON_ERROR(xvecGetKnnQueryResult(query, &result));
@@ -342,9 +363,62 @@ int main()
         printf("\n");
 
         xvecReleaseKnnResult(result);
+#else
+        xvecKnnQuery queries[2];
+        const size_t queryCount = sizeof(queries) / sizeof(queries[0]);
+
+        for (size_t q = 0; q < queryCount; q++)
+        {
+            EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[q], context, XVEC_OP_DOT_PRODUCT, queryVector, dimension, k));
+
+            if (q % 2 == 0)
+            {
+                xvecIndexArray targets[] = {indexArrays[1], indexArrays[2]};
+                EXIT_ON_ERROR(xvecSetKnnQueryTargets(
+                    queries[q], XVEC_TARGET_INDEX_ARRAY, targets, sizeof(targets) / sizeof(targets[0])));
+            }
+            else
+            {
+                xvecIndexArray targets[] = {indexArrays[2], indexArrays[3]};
+                EXIT_ON_ERROR(xvecSetKnnQueryTargets(
+                    queries[q], XVEC_TARGET_INDEX_ARRAY, targets, sizeof(targets) / sizeof(targets[0])));
+            }
+        }
+
+        EXIT_ON_ERROR(xvecExecuteQueries(queries, queryCount));
+
+        for (size_t q = 0; q < queryCount; q++)
+        {
+            xvecKnnResult result;
+            EXIT_ON_ERROR(xvecGetKnnQueryResult(queries[q], &result));
+
+            xvecReleaseKnnQuery(queries[q]);
+
+            float* scores;
+            EXIT_ON_ERROR(xvecGetKnnResultScores(result, &scores));
+
+            xvecIndex* indices;
+            EXIT_ON_ERROR(xvecGetKnnResultIndices(result, &indices));
+
+            xvecVectorArray* vectorArrays;
+            EXIT_ON_ERROR(xvecGetKnnResultVectorArrays(result, &vectorArrays));
+
+            const char* customData;
+            EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArrays[0], (void**)&customData));
+
+            for (size_t i = 0; i < k; i++)
+            {
+                printf("[%zu][%zu] %s, %d, %f\n", q, i, customData, indices[i], scores[i]);
+            }
+            printf("\n");
+
+            xvecReleaseKnnResult(result);
+        }
+#endif
     }
 
     xvecFilter filters[2];
+    const size_t filterCount = sizeof(filters) / sizeof(filters[0]);
 
     for (int i = 0; i < 2; i++)
     {
@@ -375,66 +449,73 @@ int main()
             }
         }
 
-        EXIT_ON_ERROR(xvecCopyToBuffer(bitmapBuf, bitmap, 0, filterSize));
+        EXIT_ON_ERROR(xvecCopyHostToBuffer(bitmapBuf, bitmap, 0, filterSize));
 
         EXIT_ON_ERROR(xvecCreateFilter(&filters[i], context));
 
-        EXIT_ON_ERROR(xvecSetFilterBitmap(filters[i], bitmapBuf, validCount));
+        EXIT_ON_ERROR(xvecSetFilterBuffer(filters[i], bitmapBuf, validCount));
 
         EXIT_ON_ERROR(xvecReleaseBuffer(bitmapBuf));
     }
 
+#if 1
     {
         printf("Basic Distance Calculation with Index Array and Filter\n");
 
         xvecDistanceQuery query;
-        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_DISTANCE_DOT_PRODUCT, queryVector, dimension));
+        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension));
 
         xvecIndexArray targets[] = {indexArrays[1], indexArrays[3]};
-        EXIT_ON_ERROR(xvecSetDistanceQueryTargets(
-            query, XVEC_DISTANCE_TARGET_INDEX_ARRAY, targets, sizeof(targets) / sizeof(targets[0])));
+        const size_t targetCount = sizeof(targets) / sizeof(targets[0]);
 
-        EXIT_ON_ERROR(xvecSetDistanceQueryFilters(query, filters, sizeof(filters) / sizeof(filters[0])));
+        EXIT_ON_ERROR(xvecSetDistanceQueryTargets(query, XVEC_TARGET_INDEX_ARRAY, targets, targetCount));
 
-        EXIT_ON_ERROR(xvecExecuteQuery(&query, 1));
+        EXIT_ON_ERROR(xvecSetDistanceQueryFilters(query, filters, filterCount));
 
-        xvecDistanceResult result;
-        EXIT_ON_ERROR(xvecGetDistanceQueryResult(query, &result));
+        EXIT_ON_ERROR(xvecExecuteQueries(&query, 1));
+
+        for (size_t i = 0; i < targetCount; i++)
+        {
+            xvecDistanceResult result;
+            EXIT_ON_ERROR(xvecGetDistanceQueryResult(query, i, &result));
+
+            float* distances;
+            EXIT_ON_ERROR(xvecGetDistanceResultValues(result, &distances));
+
+            size_t length;
+            EXIT_ON_ERROR(xvecGetDistanceResultLength(result, &length));
+
+            const char* customData;
+            EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArray, (void**)&customData));
+
+            for (size_t j = 0; j < length; j++)
+            {
+                printf("[%zu] %s, %f\n", j, customData, distances[j]);
+            }
+
+            printf("\n");
+            xvecReleaseDistanceResult(result);
+        }
 
         xvecReleaseDistanceQuery(query);
-
-        float* distances;
-        EXIT_ON_ERROR(xvecGetDistanceResultValues(result, &distances));
-
-        size_t size;
-        EXIT_ON_ERROR(xvecGetDistanceResultSize(result, &size));
-
-        const char* customData;
-        EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArray, (void**)&customData));
-
-        for (size_t i = 0; i < size; i++)
-        {
-            printf("[%zu] %s, %f\n", i, customData, distances[i]);
-        }
-        printf("\n");
-
-        xvecReleaseDistanceResult(result);
     }
+#endif  // XVECTOR_SIM
 
     {
         printf("Basic k-NN Search with Index Array and Filter\n");
 
         const size_t k = 10;
         xvecKnnQuery query;
-        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_KNN_DOT_PRODUCT, queryVector, dimension, k));
+        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension, k));
 
         xvecIndexArray targets[] = {indexArrays[1], indexArrays[3]};
-        EXIT_ON_ERROR(
-            xvecSetKnnQueryTargets(query, XVEC_KNN_TARGET_INDEX_ARRAY, targets, sizeof(targets) / sizeof(targets[0])));
+        const size_t targetCount = sizeof(targets) / sizeof(targets[0]);
 
-        EXIT_ON_ERROR(xvecSetKnnQueryFilters(query, filters, sizeof(filters) / sizeof(filters[0])));
+        EXIT_ON_ERROR(xvecSetKnnQueryTargets(query, XVEC_TARGET_INDEX_ARRAY, targets, targetCount));
 
-        EXIT_ON_ERROR(xvecExecuteQuery(&query, 1));
+        EXIT_ON_ERROR(xvecSetKnnQueryFilters(query, filters, filterCount));
+
+        EXIT_ON_ERROR(xvecExecuteQueries(&query, 1));
 
         xvecKnnResult result;
         EXIT_ON_ERROR(xvecGetKnnQueryResult(query, &result));

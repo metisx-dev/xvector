@@ -4,26 +4,14 @@
 
 #include "xvec_filter.h"
 #include "xvec_knn_result.h"
+#include "xvec_op_type.h"
 #include "xvec_query.h"  // IWYU pragma: export
+#include "xvec_target_type.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-typedef enum xvecKnnType
-{
-    XVEC_KNN_L2_DISTANCE,  // TODO: Not yet supported
-    XVEC_KNN_DOT_PRODUCT,
-    XVEC_KNN_COSINE_SIMILARITY,  // TODO Not yet supported
-} xvecKnnType;
-
-typedef enum xvecKnnTargetType
-{
-    XVEC_KNN_TARGET_VECTOR_ARRAY,
-    XVEC_KNN_TARGET_INDEX_ARRAY,
-    // XVEC_KNN_TARGET_VECTOR,  // TODO: Not supported
-} xvecKnnTargetType;
 
 /**
  * @brief Knn query.
@@ -39,7 +27,7 @@ typedef struct xvecKnnQueryTag_* xvecKnnQuery;
  *          If both are called, the later one is applied.
  *
  * @param [out] query     k-NN query
- * @param [in]  type      k-NN type
+ * @param [in]  opType    operation type
  * @param [in]  vector    query vector
  * @param [in]  floatType float type
  * @param [in]  dimension dimension
@@ -49,7 +37,7 @@ typedef struct xvecKnnQueryTag_* xvecKnnQuery;
  */
 xvecStatus xvecCreateKnnQuery(xvecKnnQuery* query,
                               xvecContext context,
-                              xvecKnnType type,
+                              xvecOpType  opType,
                               const float* queryVector,
                               size_t dimension,
                               size_t k);
@@ -99,7 +87,7 @@ xvecStatus xvecGetKnnQueryVector(xvecKnnQuery query, float* vector);
  *
  * @return xvecStatus
  */
-xvecStatus xvecSetKnnQueryTargets(xvecKnnQuery query, xvecKnnTargetType type, const void* targets, size_t count);
+xvecStatus xvecSetKnnQueryTargets(xvecKnnQuery query, xvecTargetType type, const void* targets, size_t count);
 
 /**
  * @brief Set the filters

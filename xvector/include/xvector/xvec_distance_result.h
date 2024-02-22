@@ -41,12 +41,10 @@ xvecStatus xvecGetDistanceResultValues(xvecDistanceResult result, float** values
 /**
  * @brief Get the number of values of the distance result
  *
- * @param [in]  result result
- * @param [out] size   number of values
- *
- * @return xvecStatus
+ * @param [in]  result the result
+ * @param [out] length the number of values
  */
-xvecStatus xvecGetDistanceResultSize(xvecDistanceResult result, size_t* size);
+xvecStatus xvecGetDistanceResultLength(xvecDistanceResult result, size_t* length);
 
 #ifdef __cplusplus
 }

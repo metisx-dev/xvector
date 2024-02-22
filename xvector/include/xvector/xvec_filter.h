@@ -46,7 +46,7 @@ xvecStatus xvecReleaseFilter(xvecFilter Filter);
  *
  * @return xvecStatus
  */
-xvecStatus xvecSetFilterBitmap(xvecFilter Filter, xvecBuffer bitmap, size_t validCount);
+xvecStatus xvecSetFilterBuffer(xvecFilter Filter, xvecBuffer bitmap, size_t validCount);
 
 /**
  * @brief Get the bitmap of the filter.
@@ -56,7 +56,7 @@ xvecStatus xvecSetFilterBitmap(xvecFilter Filter, xvecBuffer bitmap, size_t vali
  *
  * @return xvecStatus
  */
-xvecStatus xvecGetFilterBitmap(xvecFilter Filter, xvecBuffer* bitmap);
+xvecStatus xvecGetFilterBuffer(xvecFilter Filter, xvecBuffer* bitmap);
 
 /**
  * @brief Get the number of valid bits of the filter.

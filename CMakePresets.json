@@ -1,0 +1,53 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 21,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }, 
+            "environment": {
+                "VERBOSE": "1"
+            }
+        },
+        {
+            "name": "base-debug",
+            "inherits": "base",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "base-release",
+            "inherits": "base",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "debug-x64",
+            "inherits": [
+                "base-debug"
+            ],
+            "binaryDir": "${sourceDir}/build/Debug/x64",
+            "cacheVariables": {}
+        },
+        {
+            "name": "release-x64",
+            "inherits": [
+                "base-release"
+            ],
+            "binaryDir": "${sourceDir}/build/Release/x64",
+            "cacheVariables": {}
+        }
+    ]
+}
