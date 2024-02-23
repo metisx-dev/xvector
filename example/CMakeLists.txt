@@ -10,8 +10,6 @@ macro(add_xvec_example name lib src1)
   #get_target_property(OUTPUT_DIRECTORY ${name} RUNTIME_OUTPUT_DIRECTORY)
   #message(STATUS "---o> OUTPUT_DIRECTORY: ${OUTPUT_DIRECTORY}")
 
-  message(STATUS "-------------------> CMAKE_RUNTIME_OUTPUT_DIRECTORY: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-
   add_custom_command(
     TARGET ${name} POST_BUILD
 

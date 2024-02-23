@@ -3,11 +3,16 @@ import com.metisx.xvector.*;
 public class XVectorExample {
     public static void main(String[] args) {
         try {
+            String jarPath = XVectorExample.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            String jarDir = new java.io.File(jarPath).getParent();
+
             final int dimension = 3072;
             final int vectorCount = 100;
 
-            String path = "resources/100-3072.npy";
-            Npy npy = new Npy(path);
+            String npyPath = jarDir + "/resources/100-3072.npy";
+            System.out.println("npyPath=" + npyPath);
+
+            Npy npy = new Npy(npyPath);
             float[] sampleData = npy.floatElements();
 
             // 1. Create Context
