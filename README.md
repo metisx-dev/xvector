@@ -5,14 +5,31 @@ Vector Similarity Search Acceleration Library
 ## Build
 
 ```
-git clone https://github.com/metisx-dev/xvector-release.git
-cd  xvector-release
-mkdir build
-cd build
-cmake ..
+# Clone source code
+git clone https://github.com/metisx-dev/xvector.git
+cd  xvector
+
+# Build Debug Mode
+#cmake --preset debug-x64
+#cd build/Debug
+
+# Build Release Mode
+cmake --preset release-x64
+cd build/Release
+
+# Test
 cmake --build .
-cd example
-./example
+ctest --verbose
+```
+
+## Java
+
+빌드 후 CMake 바이너리 디렉토리의 `java` 하위디렉토리에 `xvector.jar`, `libxvector-jni-sim.so`, `libxvector-jni.so`가 생성됩니다.
+
+실행 시 `.so` 파일들이 위치한 디렉토리를 `-Djava.library.path`로, `xvector.jar`의 경로를 `-cp` 옵션으로 지정해주어야 합니다.
+
+```
+java -Djava.library.path=build/Debug/java -cp build/Debug/java/xvector.jar:build/Debug/java/example/gson-2.10.1.jar:build/Debug/java/example/XVectorExample.jar XVectorExample
 ```
 
 ## Status
