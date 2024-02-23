@@ -3,7 +3,6 @@
 # https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 Language: Cpp
 BasedOnStyle: Google
-BreakBeforeBraces: Allman
 AccessModifierOffset: -4
 AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
