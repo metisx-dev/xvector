@@ -1,4 +1,4 @@
-# xVector
+# XVECTOR
 
 Vector Similarity Search Acceleration Library
 
@@ -84,9 +84,9 @@ Buffer는 Device의 메모리에 할당된 공간을 나타냅니다. Buffer를 
 xvecBuffer buffer;
 xvecCreateBuffer(&buffer, context, sizeInBytes); // Create a buffer
 ...
-xvecCopyToBuffer(buffer, data, offsetInBytes, sizeInBytes); // Copy data from host to device
+xvecCopyHostToBuffer(buffer, data, offsetInBytes, sizeInBytes); // Copy data from host to device
 ...
-xvecCopyFromBuffer(data, buffer offsetInBytes, sizeInBytes); // Copy data from device to host
+xvecCopyBufferToHost(data, buffer offsetInBytes, sizeInBytes); // Copy data from device to host
 ...
 xvecReleaseBuffer(); // Release the buffer
 ```
@@ -126,12 +126,12 @@ xvecBuffer vectorBuf;
 
 xvecCreateBuffer(&vectorBuf, context, sizeof(vectors)); // Create a buffer to hold vectors. The reference count of the buffer is 1.
 
-xvecCopyToBuffer(vectorBuf, vectors, 0, sizeof(vectors)); // Copy vectors to the buffer
+xvecCopyHostToBuffer(vectorBuf, vectors, 0, sizeof(vectors)); // Copy vectors to the buffer
 
 xvecVectorArray vectorArray;
 status = xvecCreateVectorArray(&vectorArray, context, dimension); // Create a vector array.
 
-xvecSetVectorArrayVectors(vectorArray, vectorBuf, vectorCount); // Set the buffer to vector array. Now, the reference count of the buffer is 2.
+xvecSetVectorArrayBuffer(vectorArray, vectorBuf, vectorCount); // Set the buffer to vector array. Now, the reference count of the buffer is 2.
 
 xvecReleaseBuffer(vectorBuf); // The reference count of the buffer is 1, so the buffer is still alive.
 
@@ -152,7 +152,7 @@ xvecIndex indices[] = { 0, 2, 4, 6, 8 };
 xvecBuffer indexBuf;
 xvecCreateBuffer(&indexBuf, context, sizeof(indices)); // Create a buffer to hold indices.
 
-xvecCopyToBuffer(indexBuf, indices, 0, sizeof(indices)); // Copy indices to the buffer
+xvecCopyHostToBuffer(indexBuf, indices, 0, sizeof(indices)); // Copy indices to the buffer
 
 xvecIndexArray indexArray;
 xvecCreateIndexArray(&indexArray, vectorArray); // Create an index array
@@ -290,12 +290,12 @@ for (size_t i = 0; i < vectorCount; i += 2)
 xvecBuffer bitmapBuf;
 xvecCreateBuffer(&bitmapBuf, context, filterSize); // Create a buffer to store bitmap
 
-xvecCopyToBuffer(bitmapBuf, bitmap, 0, filterSize); // Copy bitmap to the device
+xvecCopyHostToBuffer(bitmapBuf, bitmap, 0, filterSize); // Copy bitmap to the device
 
 xvecFilter filter;
 xvecCreateFilter(&filter, context); // Create Filter
 
-xvecSetFilterBitmap(filter, bitmapBuf, validCount); // Set bitmap buffer to the filter.
+xvecSetFilterBuffer(filter, bitmapBuf, validCount); // Set bitmap buffer to the filter.
 
 xvecReleaseBuffer(bitmapBuf); // The buffer can be released immediately.
 
