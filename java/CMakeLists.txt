@@ -15,16 +15,20 @@ message(STATUS "Java_VERSION: ${Java_VERSION}")
 
 include(UseJava)
 
+set(XVECTOR_JAVA_SRCS
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/metisx/xvector/Buffer.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/metisx/xvector/Context.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/metisx/xvector/Filter.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/metisx/xvector/IndexArray.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/metisx/xvector/KnnQuery.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/metisx/xvector/KnnResult.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/metisx/xvector/OpType.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/metisx/xvector/Query.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/com/metisx/xvector/VectorArray.java
+)
+
 add_jar(xvector-java
-  SOURCES com/metisx/xvector/Buffer.java
-          com/metisx/xvector/Context.java
-          com/metisx/xvector/Filter.java
-          com/metisx/xvector/IndexArray.java
-          com/metisx/xvector/KnnQuery.java
-          com/metisx/xvector/KnnResult.java
-          com/metisx/xvector/OpType.java
-          com/metisx/xvector/Query.java
-          com/metisx/xvector/VectorArray.java
+  SOURCES ${XVECTOR_JAVA_SRCS}
   OUTPUT_NAME xvector
   #OUTPUT_DIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
 )
@@ -46,15 +50,7 @@ set(XVECTOR_JNI_HEADER_FILES
 
 add_custom_command(
   OUTPUT ${XVECTOR_JNI_HEADER_FILES}
-  COMMAND ${Java_JAVAH_EXECUTABLE} -d ${CMAKE_CURRENT_SOURCE_DIR}/native -classpath ${xvector_JAR_FILE}
-          com.metisx.xvector.Buffer
-          com.metisx.xvector.Context
-          com.metisx.xvector.Filter
-          com.metisx.xvector.IndexArray
-          com.metisx.xvector.KnnQuery
-          com.metisx.xvector.KnnResult
-          com.metisx.xvector.Query
-          com.metisx.xvector.VectorArray
+  COMMAND ${Java_JAVAC_EXECUTABLE} -d /tmp -h ${CMAKE_CURRENT_SOURCE_DIR}/native ${XVECTOR_JAVA_SRCS}
   DEPENDS ${xvector_JAR_FILE}
   COMMENT "CMake: Generating JNI header files..."  
 )

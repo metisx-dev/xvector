@@ -14,7 +14,6 @@
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             }, 
             "environment": {
-                "VERBOSE": "1"
             }
         },
         {
@@ -34,19 +33,30 @@
             }
         },
         {
+            "name": "base-x64",
+            "inherits": "base",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "/usr/bin/gcc-11",
+                "CMAKE_CXX_COMPILER": "/usr/bin/g++-11"
+            }
+        },
+        {
             "name": "debug-x64",
             "inherits": [
-                "base-debug"
+                "base-debug",
+                "base-x64"
             ],
-            "binaryDir": "${sourceDir}/build/Debug/x64",
+            "binaryDir": "${sourceDir}/build/Debug",
             "cacheVariables": {}
         },
         {
             "name": "release-x64",
             "inherits": [
-                "base-release"
+                "base-release",
+                "base-x64"
             ],
-            "binaryDir": "${sourceDir}/build/Release/x64",
+            "binaryDir": "${sourceDir}/build/Release",
             "cacheVariables": {}
         }
     ]
