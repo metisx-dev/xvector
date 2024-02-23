@@ -131,7 +131,7 @@ xvecCopyHostToBuffer(vectorBuf, vectors, 0, sizeof(vectors)); // Copy vectors to
 xvecVectorArray vectorArray;
 status = xvecCreateVectorArray(&vectorArray, context, dimension); // Create a vector array.
 
-xvecSetVectorArrayBuffer(vectorArray, vectorBuf, vectorCount); // Set the buffer to vector array. Now, the reference count of the buffer is 2.
+xvecSetVectorArrayBuffer(vectorArray, vectorBuf, NULL, vectorCount); // Set the buffer to vector array. Now, the reference count of the buffer is 2.
 
 xvecReleaseBuffer(vectorBuf); // The reference count of the buffer is 1, so the buffer is still alive.
 

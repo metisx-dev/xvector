@@ -82,7 +82,7 @@ JNIEXPORT void JNICALL Java_com_metisx_xvector_VectorArray_nativeSetBuffer(JNIEn
     xvecBuffer buffer = reinterpret_cast<xvecBuffer>(jNativeBuffer);
     // jbyte *array = jniEnv->GetByteArrayElements(jArray, NULL);
 
-    xvecStatus status = xvecSetVectorArrayBuffer(vectorArray, buffer, length);
+    xvecStatus status = xvecSetVectorArrayBuffer(vectorArray, buffer, NULL, length);
 
     if (status != XVEC_SUCCESS)
     {

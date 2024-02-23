@@ -72,6 +72,11 @@ xvecStatus xvecGetKnnResultIndices(xvecKnnResult result, xvecIndex** indices);
  */
 xvecStatus xvecGetKnnResultVectorArrays(xvecKnnResult result, xvecVectorArray** vectorArrays);
 
+/**
+ * @brief Get the result vector's metadata in a k-NN result.
+*/
+xvecStatus xvecGetKnnResultMetadata(xvecKnnResult result, uintptr_t** metada);
+
 #ifdef __cplusplus
 }
 #endif

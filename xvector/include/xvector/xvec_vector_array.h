@@ -59,11 +59,12 @@ xvecStatus xvecGetVectorArrayDimension(xvecVectorArray vectorArray, size_t *dime
  *
  * @param [in] vectorArray vector array
  * @param [in] vectors     a buffer containing vectors
+ * @param [in] metadata    metadata
  * @param [in] length      the number of vectors
  *
  * @return xvecStatus
  */
-xvecStatus xvecSetVectorArrayBuffer(xvecVectorArray vectorArray, xvecBuffer vectors, size_t length);
+xvecStatus xvecSetVectorArrayBuffer(xvecVectorArray vectorArray, xvecBuffer buffer, uintptr_t *metadata, size_t length);
 
 /**
  * @brief Get the buffer containing vectors of a vector array.
@@ -72,11 +73,21 @@ xvecStatus xvecSetVectorArrayBuffer(xvecVectorArray vectorArray, xvecBuffer vect
  *          otherwise it will cause a memory leak.
  *
  * @param [in]  vectorArray vector array
- * @param [out] vectors     a buffer containing vectors
+ * @param [out] buffer      buffer
  *
  * @return xvecStatus
  */
-xvecStatus xvecGetVectorArrayBuffer(xvecVectorArray vectorArray, xvecBuffer *vectors);
+xvecStatus xvecGetVectorArrayBuffer(xvecVectorArray vectorArray, xvecBuffer *buffer);
+
+/**
+ * @brief Get the metadata to a vector array.
+ *
+ * @param [in] vectorArray vector array
+ * @param [out] metadata    metadata
+ *
+ * @return xvecStatus
+ */
+xvecStatus xvecGetVectorArrayMetadata(xvecVectorArray vectorArray, uintptr_t **metadata);
 
 /**
  * @brief Get the number of vectors in a vector array.
