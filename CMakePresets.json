@@ -18,7 +18,6 @@
         },
         {
             "name": "base-debug",
-            "inherits": "base",
             "hidden": true,
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
@@ -26,7 +25,6 @@
         },
         {
             "name": "base-release",
-            "inherits": "base",
             "hidden": true,
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
@@ -34,7 +32,6 @@
         },
         {
             "name": "base-x64",
-            "inherits": "base",
             "hidden": true,
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "/usr/bin/gcc-11",
@@ -44,6 +41,7 @@
         {
             "name": "debug-x64",
             "inherits": [
+                "base",
                 "base-debug",
                 "base-x64"
             ],
@@ -53,6 +51,7 @@
         {
             "name": "release-x64",
             "inherits": [
+                "base",
                 "base-release",
                 "base-x64"
             ],
