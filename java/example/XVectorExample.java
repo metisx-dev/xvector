@@ -22,7 +22,7 @@ public class XVectorExample {
             VectorArray vectorArray = new VectorArray(context, dimension);
 
             {
-                Buffer vectorBuffer = new Buffer(context, vectorCount * dimension * Float.BYTES);
+                Buffer vectorBuffer = new Buffer(context, (long)vectorCount * dimension * Float.BYTES);
 
                 vectorBuffer.copyHostToBuffer(sampleData, 0, vectorCount * dimension);
 
@@ -68,7 +68,7 @@ public class XVectorExample {
                 System.out.println("-- k-NN Search with VectorArray and Filter --");
 
                 Filter filter = new Filter(context);
-                Buffer filterBuffer = new Buffer(context, (vectorCount + 7) / 8);
+                Buffer filterBuffer = new Buffer(context, (long)(vectorCount + 7) / 8);
                 byte[] bitmap = new byte[filterSize];
 
                 for (int i = 0; i < filterSize; ++i) {
@@ -115,7 +115,7 @@ public class XVectorExample {
             for (int i = 0; i < 4; i++) {
                 indexArrays[i] = new IndexArray(vectorArray);
 
-                Buffer indexBuffer = new Buffer(context, 25 * Integer.BYTES);
+                Buffer indexBuffer = new Buffer(context, (long)25 * Integer.BYTES);
 
                 int[] indices = new int[25];
                 for (int j = 0; j < 25; ++j) {
@@ -139,7 +139,7 @@ public class XVectorExample {
 
                 filters[i] = new Filter(context);
 
-                Buffer filterBuffer = new Buffer(context, (vectorCount + 7) / 8);
+                Buffer filterBuffer = new Buffer(context, (long)(vectorCount + 7) / 8);
                 byte[] bitmap = new byte[filterSize];
 
                 int validCount = 0;
