@@ -55,6 +55,7 @@ int testFunction()
 
     xvecReleaseBuffer(vectorBuf);
 
+    if (1)
     {
         printf("Basic Distance Calculation with Vector Array\n");
 
