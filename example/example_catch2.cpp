@@ -19,7 +19,10 @@ static void exit_on_error(const xvecStatus status, const char* const file, const
 
 int testFunction()
 {
-    extern float queryVector[];
+    extern float queryVector0[];
+    extern float queryVector1[];
+    extern float queryVector2[];
+    extern float queryVector3[];
 
     const size_t dimension = 3072;
     const size_t vectorCount = 100;
@@ -63,7 +66,7 @@ int testFunction()
         const size_t targetCount = 1;
 
         xvecDistanceQuery query;
-        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension));
+        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector0, dimension));
 
         EXIT_ON_ERROR(xvecSetDistanceQueryTargets(query, XVEC_TARGET_VECTOR_ARRAY, &vectorArray, targetCount));
 
@@ -95,7 +98,7 @@ int testFunction()
         xvecReleaseDistanceQuery(query);
     }
 
-    if (1)
+    if (0)
     {
         printf("Basic k-NN Search with Vector Array\n");
 
@@ -103,7 +106,7 @@ int testFunction()
         const size_t k = 10;
 
         xvecKnnQuery query;
-        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension, k));
+        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector0, dimension, k));
 
         EXIT_ON_ERROR(xvecSetKnnQueryTargets(query, XVEC_TARGET_VECTOR_ARRAY, &vectorArray, 1));
 
@@ -146,13 +149,80 @@ int testFunction()
         xvecReleaseKnnResult(result);
     }
 
+    if (1)
+    {
+        printf("Extended k-NN Search Example with 4 Queries and Target Vector Array\n");
+
+        constexpr uint64_t queryCount = 4;
+        const size_t targetCount = 1;
+        const size_t k = 10;
+
+        xvecKnnQuery* queries = new xvecKnnQuery[queryCount];
+        EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[0], context, XVEC_OP_DOT_PRODUCT, queryVector0, dimension, k));
+        EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[1], context, XVEC_OP_DOT_PRODUCT, queryVector1, dimension, k));
+        EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[2], context, XVEC_OP_DOT_PRODUCT, queryVector2, dimension, k));
+        EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[3], context, XVEC_OP_DOT_PRODUCT, queryVector3, dimension, k));
+
+        for (uint64_t query = 0; query < queryCount; query++)
+        {
+            EXIT_ON_ERROR(xvecSetKnnQueryTargets(queries[query], XVEC_TARGET_VECTOR_ARRAY, &vectorArray, 1));
+
+        }
+
+        EXIT_ON_ERROR(xvecExecuteQueries(queries, queryCount));
+
+        for (uint64_t query = 0; query < 4; query++)
+        {
+            xvecKnnResult result;
+            EXIT_ON_ERROR(xvecGetKnnQueryResult(queries[query], &result));     
+
+            xvecReleaseKnnQuery(queries[query]);
+
+            float* scores;
+            EXIT_ON_ERROR(xvecGetKnnResultScores(result, &scores));
+
+            xvecIndex* indices;
+            EXIT_ON_ERROR(xvecGetKnnResultIndices(result, &indices));
+
+            xvecVectorArray* vectorArrays;
+            EXIT_ON_ERROR(xvecGetKnnResultVectorArrays(result, &vectorArrays));
+
+            uintptr_t* resultMetadata;
+            EXIT_ON_ERROR(xvecGetKnnResultMetadata(result, &resultMetadata));
+
+            printf("Metadata: %p\n", resultMetadata);
+
+            const char* customData;
+            EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArrays[0], (void**)&customData));
+
+            for (size_t i = 0; i < k; i++)
+            {
+                printf("[%zu] %s, %d, %f, 0x%08X(%u)\n",
+                    i,
+                    customData,
+                    indices[i],
+                    scores[i],
+                    (uint32_t)resultMetadata[i],
+                    (uint32_t)(resultMetadata[i] & 0xFF000000));
+            }
+            printf("\n");
+
+            xvecReleaseKnnResult(result);
+            
+
+        }
+
+
+        
+    }
+
     if (0)
     {
         printf("Basic Distance Calculation with Vector Array and Filter\n");
 
         const size_t targetCount = 1;
         xvecDistanceQuery query;
-        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension));
+        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector0, dimension));
 
         EXIT_ON_ERROR(xvecSetDistanceQueryTargets(query, XVEC_TARGET_VECTOR_ARRAY, &vectorArray, 1));
 
@@ -219,7 +289,7 @@ int testFunction()
 
         const size_t k = 10;
         xvecKnnQuery query;
-        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension, k));
+        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector0, dimension, k));
 
         EXIT_ON_ERROR(xvecSetKnnQueryTargets(query, XVEC_TARGET_VECTOR_ARRAY, &vectorArray, 1));
 
@@ -318,7 +388,7 @@ int testFunction()
         printf("Basic Distance Calculation with Index Array\n");
 
         xvecDistanceQuery query;
-        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension));
+        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector0, dimension));
 
         xvecIndexArray targets[] = {indexArrays[1], indexArrays[3]};
         const size_t targetCount = sizeof(targets) / sizeof(targets[0]);
@@ -363,7 +433,7 @@ int testFunction()
 
         for (size_t q = 0; q < queryCount; q++)
         {
-            EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[q], context, XVEC_OP_DOT_PRODUCT, queryVector, dimension, k));
+            EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[q], context, XVEC_OP_DOT_PRODUCT, queryVector0, dimension, k));
 
             if (q % 2 == 0)
             {
@@ -465,7 +535,7 @@ int testFunction()
         printf("Basic Distance Calculation with Index Array and Filter\n");
 
         xvecDistanceQuery query;
-        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension));
+        EXIT_ON_ERROR(xvecCreateDistanceQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector0, dimension));
 
         xvecIndexArray targets[] = {indexArrays[1], indexArrays[3]};
         const size_t targetCount = sizeof(targets) / sizeof(targets[0]);
@@ -508,7 +578,7 @@ int testFunction()
 
         const size_t k = 10;
         xvecKnnQuery query;
-        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector, dimension, k));
+        EXIT_ON_ERROR(xvecCreateKnnQuery(&query, context, XVEC_OP_DOT_PRODUCT, queryVector0, dimension, k));
 
         xvecIndexArray targets[] = {indexArrays[1], indexArrays[3]};
         const size_t targetCount = sizeof(targets) / sizeof(targets[0]);
