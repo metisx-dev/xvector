@@ -1,7 +1,8 @@
-#include <catch2/catch_all.hpp>
 #include <stdio.h>
 #include <string.h>
 #include <xvector/xvector.h>
+
+#include <catch2/catch_all.hpp>
 
 extern "C" int readVectors(const char* filename, float* vectors, size_t dimension, size_t vectorCount);
 
@@ -55,7 +56,7 @@ int testFunction()
 
     xvecReleaseBuffer(vectorBuf);
 
-    if (1)
+    if (0)
     {
         printf("Basic Distance Calculation with Vector Array\n");
 
@@ -94,7 +95,7 @@ int testFunction()
         xvecReleaseDistanceQuery(query);
     }
 
-    if (0)
+    if (1)
     {
         printf("Basic k-NN Search with Vector Array\n");
 
@@ -560,7 +561,6 @@ int testFunction()
 
     return 0;
 }
-
 
 TEST_CASE("test on xvector C API")
 {
