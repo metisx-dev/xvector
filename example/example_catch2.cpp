@@ -25,7 +25,7 @@ int testFunction()
     extern float queryVector3[];
 
     const size_t dimension = 3072;
-    const size_t vectorCount = 100;
+    size_t vectorCount = 100;
     xvecContext context;
 
     EXIT_ON_ERROR(xvecCreateContext(&context, NULL));
@@ -37,10 +37,10 @@ int testFunction()
 
     EXIT_ON_ERROR(xvecSetVectorArrayCustomData(vectorArray, (void*)"EMBEDDING"));
 
-    float vectors[dimension * vectorCount];
+    float* vectors = new float[dimension * vectorCount];
     if (readVectors("resources/100-3072.npy", vectors, dimension, vectorCount) != 0)
     {
-        return 1;
+       return 1;
     }
 
     xvecBuffer vectorBuf;
@@ -57,6 +57,7 @@ int testFunction()
 
     EXIT_ON_ERROR(xvecSetVectorArrayBuffer(vectorArray, vectorBuf, metadata, vectorCount));
 
+    delete vectors;
     xvecReleaseBuffer(vectorBuf);
 
     if (0)
@@ -166,12 +167,11 @@ int testFunction()
         for (uint64_t query = 0; query < queryCount; query++)
         {
             EXIT_ON_ERROR(xvecSetKnnQueryTargets(queries[query], XVEC_TARGET_VECTOR_ARRAY, &vectorArray, 1));
-
         }
 
         EXIT_ON_ERROR(xvecExecuteQueries(queries, queryCount));
 
-        for (uint64_t query = 0; query < 4; query++)
+        for (uint64_t query = 0; query < queryCount; query++)
         {
             xvecKnnResult result;
             EXIT_ON_ERROR(xvecGetKnnQueryResult(queries[query], &result));     
@@ -207,13 +207,8 @@ int testFunction()
             }
             printf("\n");
 
-            xvecReleaseKnnResult(result);
-            
-
-        }
-
-
-        
+            xvecReleaseKnnResult(result); 
+        }        
     }
 
     if (0)
