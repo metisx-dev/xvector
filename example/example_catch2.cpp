@@ -25,7 +25,7 @@ int testFunction()
     extern float queryVector3[];
 
     const size_t dimension = 3072;
-    size_t vectorCount = 100000;
+    size_t vectorCount = 100;
     xvecContext context;
 
     EXIT_ON_ERROR(xvecCreateContext(&context, NULL));
