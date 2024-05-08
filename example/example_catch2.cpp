@@ -42,7 +42,7 @@ int testFunction()
     {
        return 1;
     }
-    vectorCount = 100000;
+    vectorCount = 99669;
     
     xvecBuffer vectorBuf;
     EXIT_ON_ERROR(xvecCreateBuffer(&vectorBuf, context, vectorCount * dimension * sizeof(float)));
@@ -61,7 +61,7 @@ int testFunction()
     delete vectors;
     xvecReleaseBuffer(vectorBuf);
 
-    if (0)
+    if (1)
     {
         printf("Basic Distance Calculation with Vector Array\n");
 
@@ -89,7 +89,7 @@ int testFunction()
             EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArray, (void**)&customData));
 
             for (size_t j = 0; j < length; j++)
-            {
+            {                  
                 printf("[%zu] %s, %f\n", j, customData, distances[j]);
             }
 
@@ -151,7 +151,7 @@ int testFunction()
         xvecReleaseKnnResult(result);
     }
 
-    if (1)
+    if (0)
     {
         printf("Extended k-NN Search Example with 4 Queries and Target Vector Array\n");
 
