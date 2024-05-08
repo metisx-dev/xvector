@@ -25,7 +25,7 @@ int testFunction()
     extern float queryVector3[];
 
     const size_t dimension = 3072;
-    size_t vectorCount = 100;
+    size_t vectorCount = 100000;
     xvecContext context;
 
     EXIT_ON_ERROR(xvecCreateContext(&context, NULL));
@@ -38,11 +38,12 @@ int testFunction()
     EXIT_ON_ERROR(xvecSetVectorArrayCustomData(vectorArray, (void*)"EMBEDDING"));
 
     float* vectors = new float[dimension * vectorCount];
-    if (readVectors("resources/100-3072.npy", vectors, dimension, vectorCount) != 0)
+    if (readVectors("resources/100000-3072-h.npy", vectors, dimension, vectorCount) != 0)
     {
        return 1;
     }
-
+    vectorCount = 100000;
+    
     xvecBuffer vectorBuf;
     EXIT_ON_ERROR(xvecCreateBuffer(&vectorBuf, context, vectorCount * dimension * sizeof(float)));
 
