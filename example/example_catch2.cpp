@@ -2,7 +2,7 @@
 #include <string.h>
 #include <xvector/xvector.h>
 
-#include <catch2/catch_all.hpp>
+#include "catch2/catch_all.hpp"
 
 extern "C" int readVectors(const char* filename, float* vectors, size_t dimension, size_t vectorCount);
 
@@ -37,8 +37,11 @@ int testFunction()
 
     EXIT_ON_ERROR(xvecSetVectorArrayCustomData(vectorArray, (void*)"EMBEDDING"));
 
-    float* vectors = new float[dimension * vectorCount];
-    if (readVectors("resources/100000-3072-h.npy", vectors, dimension, vectorCount) != 0)
+    //float vectors[dimension * vectorCount];
+    std::vector<float> vectors(dimension * vectorCount);
+
+    if (readVectors("resources/100-3072.npy", vectors.data(), dimension, vectorCount) != 0)
+    //if (readVectors("resources/100000-3072-a.npy", vectors.data(), dimension, vectorCount) != 0)
     {
        return 1;
     }
@@ -47,7 +50,7 @@ int testFunction()
     xvecBuffer vectorBuf;
     EXIT_ON_ERROR(xvecCreateBuffer(&vectorBuf, context, vectorCount * dimension * sizeof(float)));
 
-    EXIT_ON_ERROR(xvecCopyHostToBuffer(vectorBuf, vectors, 0, vectorCount * dimension * sizeof(float)));
+    EXIT_ON_ERROR(xvecCopyHostToBuffer(vectorBuf, vectors.data(), 0, vectorCount * dimension * sizeof(float)));
 
     uintptr_t* metadata = (uintptr_t*)malloc(vectorCount * sizeof(uintptr_t));
 

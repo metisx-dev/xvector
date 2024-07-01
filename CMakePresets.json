@@ -34,8 +34,8 @@
             "name": "base-x64",
             "hidden": true,
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "/usr/bin/gcc-11",
-                "CMAKE_CXX_COMPILER": "/usr/bin/g++-11"
+                "CMAKE_C_COMPILER": "/usr/bin/gcc-13",
+                "CMAKE_CXX_COMPILER": "/usr/bin/g++-13"
             }
         },
         {
