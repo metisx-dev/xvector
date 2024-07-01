@@ -60,7 +60,6 @@ int testFunction()
 
     EXIT_ON_ERROR(xvecSetVectorArrayBuffer(vectorArray, vectorBuf, metadata, vectorCount));
 
-    delete vectors;
     xvecReleaseBuffer(vectorBuf);
 
     if (0)
