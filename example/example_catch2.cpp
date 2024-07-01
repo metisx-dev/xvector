@@ -25,7 +25,7 @@ int testFunction()
     extern float queryVector3[];
 
     const size_t dimension = 3072;
-    size_t vectorCount = 100000;
+    size_t vectorCount = 100;
     xvecContext context;
 
     EXIT_ON_ERROR(xvecCreateContext(&context, NULL));
@@ -45,7 +45,6 @@ int testFunction()
     {
        return 1;
     }
-    vectorCount = 100000;
     
     xvecBuffer vectorBuf;
     EXIT_ON_ERROR(xvecCreateBuffer(&vectorBuf, context, vectorCount * dimension * sizeof(float)));
@@ -64,7 +63,7 @@ int testFunction()
     delete vectors;
     xvecReleaseBuffer(vectorBuf);
 
-    if (1)
+    if (0)
     {
         printf("Basic Distance Calculation with Vector Array\n");
 
@@ -154,7 +153,7 @@ int testFunction()
         xvecReleaseKnnResult(result);
     }
 
-    if (0)
+    if (1)
     {
         printf("Extended k-NN Search Example with 4 Queries and Target Vector Array\n");
 
