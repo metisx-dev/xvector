@@ -11,9 +11,16 @@ set(CMAKE_CXX_STANDARD 20)
 include(fetch-external)
 set(CATCH2_ENABLE TRUE)
 
-include(CTest)
+include(FetchContent)
+FetchContent_Declare(
+  Catch2
+  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+  GIT_TAG        v3.4.0 # or a later release
+)
+FetchContent_MakeAvailable(Catch2)
 
-enable_testing()
+# include(CTest)
+# enable_testing()
 
 set(XVECTOR_HOME_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/xvector)
 

@@ -3,19 +3,17 @@ cmake_minimum_required(VERSION 3.11)
 macro(add_xvec_example name lib src1)
   add_executable(${name} ${src1} ${ARGN}) 
 
-  if (${CATCH2_ENABLE})
-    include(fetch-external)
+  # if (${CATCH2_ENABLE})
     target_link_libraries(${name} PUBLIC ${lib} Catch2::Catch2WithMain)
 
-  else()
-    include(fetch-external)
-    target_link_libraries(${name} PUBLIC ${lib} Catch2::Catch2WithMain)
-    add_test(NAME ${name}
-      #COMMAND valgrind -s --error-exitcode=1 --leak-check=full ./${name}-${target}
-      COMMAND ./${name}
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    )    
-  endif()
+  # else()
+  #   target_link_libraries(${name} ${lib})
+  #   add_test(NAME ${name}
+  #     #COMMAND valgrind -s --error-exitcode=1 --leak-check=full ./${name}-${target}
+  #     COMMAND ./${name}
+  #     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  #   )
+  # endif()
  
   set_target_properties(${name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
   

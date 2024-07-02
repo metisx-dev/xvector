@@ -2,7 +2,7 @@
 #include <string.h>
 #include <xvector/xvector.h>
 
-#include <catch2/catch_all.hpp>
+#include "catch2/catch_all.hpp"
 
 extern "C" int readVectors(const char* filename, float* vectors, size_t dimension, size_t vectorCount);
 
@@ -25,7 +25,7 @@ int testFunction()
     extern float queryVector3[];
 
     const size_t dimension = 3072;
-    size_t vectorCount = 100000;
+    size_t vectorCount = 100;
     xvecContext context;
 
     EXIT_ON_ERROR(xvecCreateContext(&context, NULL));
@@ -37,17 +37,19 @@ int testFunction()
 
     EXIT_ON_ERROR(xvecSetVectorArrayCustomData(vectorArray, (void*)"EMBEDDING"));
 
-    float* vectors = new float[dimension * vectorCount];
-    if (readVectors("resources/100000-3072-h.npy", vectors, dimension, vectorCount) != 0)
+    //float vectors[dimension * vectorCount];
+    std::vector<float> vectors(dimension * vectorCount);
+
+    if (readVectors("resources/100-3072.npy", vectors.data(), dimension, vectorCount) != 0)
+    //if (readVectors("resources/100000-3072-a.npy", vectors.data(), dimension, vectorCount) != 0)
     {
        return 1;
     }
-    vectorCount = 99669;
     
     xvecBuffer vectorBuf;
     EXIT_ON_ERROR(xvecCreateBuffer(&vectorBuf, context, vectorCount * dimension * sizeof(float)));
 
-    EXIT_ON_ERROR(xvecCopyHostToBuffer(vectorBuf, vectors, 0, vectorCount * dimension * sizeof(float)));
+    EXIT_ON_ERROR(xvecCopyHostToBuffer(vectorBuf, vectors.data(), 0, vectorCount * dimension * sizeof(float)));
 
     uintptr_t* metadata = (uintptr_t*)malloc(vectorCount * sizeof(uintptr_t));
 
@@ -58,10 +60,9 @@ int testFunction()
 
     EXIT_ON_ERROR(xvecSetVectorArrayBuffer(vectorArray, vectorBuf, metadata, vectorCount));
 
-    delete vectors;
     xvecReleaseBuffer(vectorBuf);
 
-    if (1)
+    if (0)
     {
         printf("Basic Distance Calculation with Vector Array\n");
 
@@ -151,7 +152,7 @@ int testFunction()
         xvecReleaseKnnResult(result);
     }
 
-    if (0)
+    if (1)
     {
         printf("Extended k-NN Search Example with 4 Queries and Target Vector Array\n");
 
