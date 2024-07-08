@@ -71,7 +71,6 @@ RUN chmod +x ./cmake-3.28.1-linux-x86_64.sh
 RUN mkdir -p /opt/cmake
 RUN ./cmake-3.28.1-linux-x86_64.sh --prefix=/opt/cmake --skip-license
 RUN ln -s /opt/cmake/bin/cmake /usr/bin/cmake && \
-    ln -s /opt/cmake/bin/cpack /usr/bin/cpack && \
-    ln -s /opt/cmake/bin/ctest /usr/bin/ctest
+    ln -s /opt/cmake/bin/cpack /usr/bin/cpack
 
 WORKDIR /xvector

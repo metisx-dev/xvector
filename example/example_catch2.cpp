@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <xvector/xvector.h>
+#include <iostream>
 
 #include "catch2/catch_all.hpp"
 
@@ -25,7 +26,7 @@ int testFunction()
     extern float queryVector3[];
 
     const size_t dimension = 3072;
-    size_t vectorCount = 100;
+    size_t vectorCount = 100000;
     xvecContext context;
 
     EXIT_ON_ERROR(xvecCreateContext(&context, NULL));
@@ -37,28 +38,29 @@ int testFunction()
 
     EXIT_ON_ERROR(xvecSetVectorArrayCustomData(vectorArray, (void*)"EMBEDDING"));
 
-    //float vectors[dimension * vectorCount];
     std::vector<float> vectors(dimension * vectorCount);
 
-    if (readVectors("resources/100-3072.npy", vectors.data(), dimension, vectorCount) != 0)
-    //if (readVectors("resources/100000-3072-a.npy", vectors.data(), dimension, vectorCount) != 0)
+    //if (readVectors("resources/100-3072.npy", vectors.data(), dimension, vectorCount) != 0)
+    if (readVectors("resources/100000-3072.npy", vectors.data(), dimension, vectorCount) != 0)
     {
        return 1;
     }
+
+    size_t vectorCountForCalc = 100000;
     
     xvecBuffer vectorBuf;
-    EXIT_ON_ERROR(xvecCreateBuffer(&vectorBuf, context, vectorCount * dimension * sizeof(float)));
+    EXIT_ON_ERROR(xvecCreateBuffer(&vectorBuf, context, vectorCountForCalc * dimension * sizeof(float)));
 
-    EXIT_ON_ERROR(xvecCopyHostToBuffer(vectorBuf, vectors.data(), 0, vectorCount * dimension * sizeof(float)));
+    EXIT_ON_ERROR(xvecCopyHostToBuffer(vectorBuf, vectors.data(), 0, vectorCountForCalc * dimension * sizeof(float)));
 
-    uintptr_t* metadata = (uintptr_t*)malloc(vectorCount * sizeof(uintptr_t));
+    uintptr_t* metadata = (uintptr_t*)malloc(vectorCountForCalc * sizeof(uintptr_t));
 
-    for (size_t i = 0; i < vectorCount; i++)
+    for (size_t i = 0; i < vectorCountForCalc; i++)
     {
         metadata[i] = 0xAB000000ull | i;
     }
 
-    EXIT_ON_ERROR(xvecSetVectorArrayBuffer(vectorArray, vectorBuf, metadata, vectorCount));
+    EXIT_ON_ERROR(xvecSetVectorArrayBuffer(vectorArray, vectorBuf, metadata, vectorCountForCalc));
 
     xvecReleaseBuffer(vectorBuf);
 
@@ -103,7 +105,8 @@ int testFunction()
 
     if (0)
     {
-        printf("Basic k-NN Search with Vector Array\n");
+        //printf("Basic k-NN Search with Vector Array\n");
+        std::cout << "Basic k-NN Search with Vector Array" << std::endl << std::endl;
 
         const size_t targetCount = 1;
         const size_t k = 10;
@@ -132,29 +135,33 @@ int testFunction()
         uintptr_t* resultMetadata;
         EXIT_ON_ERROR(xvecGetKnnResultMetadata(result, &resultMetadata));
 
-        printf("Metadata: %p\n", resultMetadata);
+        //printf("Metadata: %p\n", resultMetadata);
+        std::cout << "Metadata: " << resultMetadata << std::endl;
 
         const char* customData;
         EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArrays[0], (void**)&customData));
 
         for (size_t i = 0; i < k; i++)
         {
-            printf("[%zu] %s, %d, %f, 0x%08X(%u)\n",
-                   i,
-                   customData,
-                   indices[i],
-                   scores[i],
-                   (uint32_t)resultMetadata[i],
-                   (uint32_t)(resultMetadata[i] & 0xFF000000));
+            std::cout << "[" << i << "] " << customData << " " << indices[i] << " " << scores[i] << " " << std::uppercase << std::hex << (uintptr_t)resultMetadata[i] << std::dec << std::endl;
+            //printf("[%zu] %s, %d, %f, 0x%08X(%u)\n",
+            //       i,
+            //       customData,
+            //       indices[i],
+            //       scores[i],
+            //       (uint32_t)resultMetadata[i],
+            //       (uint32_t)(resultMetadata[i] & 0xFF000000));
         }
-        printf("\n");
+        //printf("\n");
+        std::cout << std::endl;
 
         xvecReleaseKnnResult(result);
     }
 
     if (1)
     {
-        printf("Extended k-NN Search Example with 4 Queries and Target Vector Array\n");
+        //printf("Extended k-NN Search Example with 4 Queries and Target Vector Array\n");
+        std::cout << "Extended k-NN Search Example with 4 Queries and Target Vector Array" << std::endl << std::endl;
 
         constexpr uint64_t queryCount = 4;
         const size_t targetCount = 1;
@@ -192,22 +199,25 @@ int testFunction()
             uintptr_t* resultMetadata;
             EXIT_ON_ERROR(xvecGetKnnResultMetadata(result, &resultMetadata));
 
-            printf("Metadata: %p\n", resultMetadata);
+            //printf("Metadata: %p\n", resultMetadata);
+            std::cout << "Metadata: " << resultMetadata << std::endl;
 
             const char* customData;
             EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArrays[0], (void**)&customData));
 
             for (size_t i = 0; i < k; i++)
             {
-                printf("[%zu] %s, %d, %f, 0x%08X(%u)\n",
-                    i,
-                    customData,
-                    indices[i],
-                    scores[i],
-                    (uint32_t)resultMetadata[i],
-                    (uint32_t)(resultMetadata[i] & 0xFF000000));
+                std::cout << "[" << i << "] " << customData << " " << indices[i] << " " << scores[i] << " " << std::uppercase << std::hex << (uintptr_t)resultMetadata[i] << std::dec << std::endl;
+                //printf("[%zu] %s, %d, %f, 0x%08X(%u)\n",
+                //    i,
+                //    customData,
+                //    indices[i],
+                //    scores[i],
+                //    (uint32_t)resultMetadata[i],
+                //    (uint32_t)(resultMetadata[i] & 0xFF000000));
             }
-            printf("\n");
+            //printf("\n");
+            std::cout << std::endl;
 
             xvecReleaseKnnResult(result); 
         }        
