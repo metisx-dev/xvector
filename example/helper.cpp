@@ -98,10 +98,10 @@ int readVectors(const char* filename, float* vectors, size_t dim, size_t vectorC
 
     memcpy(vectors, d.data.data(), d.data.size() * sizeof(float));
 
-    for (int i = 0; i < 32; i++)
-    {
-        std::cout << vectors[i] << std::endl;
-    }
+    //for (int i = 0; i < 32; i++)
+    //{
+    //    std::cout << vectors[i] << std::endl;
+    //}
 
     return 0;
 }

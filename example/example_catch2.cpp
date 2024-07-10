@@ -27,6 +27,7 @@ int testFunction()
 
     const size_t dimension = 3072;
     size_t vectorCount = 100000;
+    size_t vectorCountForCalc = 100000;
     xvecContext context;
 
     EXIT_ON_ERROR(xvecCreateContext(&context, NULL));
@@ -41,12 +42,22 @@ int testFunction()
     std::vector<float> vectors(dimension * vectorCount);
 
     //if (readVectors("resources/100-3072.npy", vectors.data(), dimension, vectorCount) != 0)
-    if (readVectors("resources/100000-3072.npy", vectors.data(), dimension, vectorCount) != 0)
-    {
-       return 1;
-    }
+    // if (readVectors("resources/100000-3072.npy", vectors.data(), dimension, vectorCount) != 0)
+    // {
+    //    return 1;
+    // }
+    size_t fileCount = vectorCount / 100000;
+    constexpr char file_suffix[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'};
 
-    size_t vectorCountForCalc = 100000;
+    for (size_t i = 0; i < fileCount; i++)
+    {
+        char filename[256];
+        sprintf(filename, "resources/100000-3072-%c.npy", file_suffix[i]);
+        if (readVectors(filename, vectors.data() + i * 100000 * dimension, dimension, 100000) != 0)
+        {
+            return 1;
+        }
+    }
     
     xvecBuffer vectorBuf;
     EXIT_ON_ERROR(xvecCreateBuffer(&vectorBuf, context, vectorCountForCalc * dimension * sizeof(float)));
@@ -158,7 +169,7 @@ int testFunction()
         xvecReleaseKnnResult(result);
     }
 
-    if (1)
+    if (0)
     {
         //printf("Extended k-NN Search Example with 4 Queries and Target Vector Array\n");
         std::cout << "Extended k-NN Search Example with 4 Queries and Target Vector Array" << std::endl << std::endl;
@@ -172,6 +183,75 @@ int testFunction()
         EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[1], context, XVEC_OP_DOT_PRODUCT, queryVector1, dimension, k));
         EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[2], context, XVEC_OP_DOT_PRODUCT, queryVector2, dimension, k));
         EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[3], context, XVEC_OP_DOT_PRODUCT, queryVector3, dimension, k));
+
+        for (uint64_t query = 0; query < queryCount; query++)
+        {
+            EXIT_ON_ERROR(xvecSetKnnQueryTargets(queries[query], XVEC_TARGET_VECTOR_ARRAY, &vectorArray, 1));
+        }
+
+        EXIT_ON_ERROR(xvecExecuteQueries(queries, queryCount));
+
+        for (uint64_t query = 0; query < queryCount; query++)
+        {
+            xvecKnnResult result;
+            EXIT_ON_ERROR(xvecGetKnnQueryResult(queries[query], &result));     
+
+            xvecReleaseKnnQuery(queries[query]);
+
+            float* scores;
+            EXIT_ON_ERROR(xvecGetKnnResultScores(result, &scores));
+
+            xvecIndex* indices;
+            EXIT_ON_ERROR(xvecGetKnnResultIndices(result, &indices));
+
+            xvecVectorArray* vectorArrays;
+            EXIT_ON_ERROR(xvecGetKnnResultVectorArrays(result, &vectorArrays));
+
+            uintptr_t* resultMetadata;
+            EXIT_ON_ERROR(xvecGetKnnResultMetadata(result, &resultMetadata));
+
+            //printf("Metadata: %p\n", resultMetadata);
+            std::cout << "Metadata: " << resultMetadata << std::endl;
+
+            const char* customData;
+            EXIT_ON_ERROR(xvecGetVectorArrayCustomData(vectorArrays[0], (void**)&customData));
+
+            for (size_t i = 0; i < k; i++)
+            {
+                std::cout << "[" << i << "] " << customData << " " << indices[i] << " " << scores[i] << " " << std::uppercase << std::hex << (uintptr_t)resultMetadata[i] << std::dec << std::endl;
+                //printf("[%zu] %s, %d, %f, 0x%08X(%u)\n",
+                //    i,
+                //    customData,
+                //    indices[i],
+                //    scores[i],
+                //    (uint32_t)resultMetadata[i],
+                //    (uint32_t)(resultMetadata[i] & 0xFF000000));
+            }
+            //printf("\n");
+            std::cout << std::endl;
+
+            xvecReleaseKnnResult(result); 
+        }        
+    }
+
+    if (1)
+    {
+        //printf("Extended k-NN Search Example with 4 Queries and Target Vector Array\n");
+        std::cout << "Extended k-NN Search Example with 18 Queries and Target Vector Array" << std::endl << std::endl;
+
+        constexpr uint64_t queryCount = 19;
+        const size_t targetCount = 1;
+        const size_t k = 5;
+
+        xvecKnnQuery* queries = new xvecKnnQuery[queryCount];
+
+        for (size_t query = 0; query < queryCount; query++)
+        {
+            EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[query], context, XVEC_OP_DOT_PRODUCT, queryVector0, dimension, k));
+        }
+        //EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[1], context, XVEC_OP_DOT_PRODUCT, queryVector1, dimension, k));
+        //EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[2], context, XVEC_OP_DOT_PRODUCT, queryVector2, dimension, k));
+        //EXIT_ON_ERROR(xvecCreateKnnQuery(&queries[3], context, XVEC_OP_DOT_PRODUCT, queryVector3, dimension, k));
 
         for (uint64_t query = 0; query < queryCount; query++)
         {
